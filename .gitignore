@@ -1,6 +1,9 @@
+data
 .Rproj.user
 .Rhistory
 .RData
 .Ruserdata
 analysis/figure
 analysis/*html
+packrat/lib*/
+packrat/src/
