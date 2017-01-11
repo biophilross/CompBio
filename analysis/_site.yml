@@ -17,8 +17,10 @@ navbar:
 output:
   html_document:
     toc: true
-    toc_float: true
-    theme: cosmo
+    toc_float:
+      collapsed: true
+      smooth_scroll: false
+    theme: lumen
     highlight: textmate
     include:
       after_body: include/footer.html
