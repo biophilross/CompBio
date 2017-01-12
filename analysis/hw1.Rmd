@@ -196,14 +196,46 @@ $$
 
 **(d)**
 
+```{r, problem-6d}
+simulation <- function(n, p, r, s) {
+  
+  # generate matrices
+  X <- matrix(data=0,nrow=r,ncol=s)
+  N <- matrix(data=0,nrow=r,ncol=s)
+  
+  # generate initial values
+  X[,1] <- rbinom(r, n, p)
+  N[,1] <- rpois(r, n)
+  
+  # loop through number of nodes
+  for (i in 2:s) {
+    probs <- X[,i - 1] / N[,i - 1]
+    N[,i] <- rpois(r, X[,i - 1])
+    X[,i] <- rbinom(r, N[, i - 1], replace(probs, probs > 1, 1))
+  }
+  
+  return(list(X=X,N=N))
+}
+
+# run simulation
+results <- simulation(500,0.5,1000,4)
+```
 
 **(e)**
 
+```{r, problem-6e}
+mean(results$X[,2])
+```
 
 **(f)**
 
+```{r, problem-6f}
+sum(results$X[,4] > results$X[,1])/1000
+```
 
 **(g)**
+
+I would expect the proability to be lower for $X_{4}$ than for $X_{1}$ the majority of the time due to the large mean and variance for Poisson random variables that you are dividing binomail random variables by to generate an updated probaility of success for future binomial random variables. This says that the number of copies of an allele in a population that changes stochastically over time will tend to zero in this format.
 
 ## Problem 7
 

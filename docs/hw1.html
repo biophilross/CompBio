@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Philipp Ross" />
+
+<meta name="date" content="2017-01-10" />
+
+<title>HW1</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 54px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+
+.section h2 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h3 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h4 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h5 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h6 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = false;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Fundamentals of Computational Biology</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/jdblischak/workflowr">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">HW1</h1>
+<h4 class="author"><em>Philipp Ross</em></h4>
+<h4 class="date"><em>2017-01-10</em></h4>
+
+</div>
+
+
+<p><strong>Last updated:</strong> 2017-01-12</p>
+<p><strong>Code version:</strong> f1d1eaf</p>
+<div id="problem-1" class="section level2">
+<h2>Problem 1</h2>
+<p>We want to find the probability that employee is lying, given that the lie detector detected. The calculation is outlined in the code block below and answer is printed underneath.</p>
+<pre class="r"><code>PDetectedLying       &lt;- 0.95
+PDetectedNotLying    &lt;- 0.01
+PNotDetectedLying    &lt;- 0.99
+PNotDetectedNotLying &lt;- 0.05
+
+PLying    &lt;- 0.001
+PNotLying &lt;- 0.999
+
+# Therefore...
+
+PLyingDetected &lt;- (PDetectedLying * PLying) / ((PDetectedLying * PLying) + (PDetectedNotLying*PNotLying))
+print(PLyingDetected)</code></pre>
+<pre><code>[1] 0.08683729</code></pre>
+</div>
+<div id="problem-2" class="section level2">
+<h2>Problem 2</h2>
+<p><strong>(a)</strong></p>
+<p>Here we want to show that if <span class="math inline">\(X = F^{-1}(U)\)</span>, then <span class="math inline">\(F(X) = U)\)</span>.</p>
+<p><span class="math display">\[
+\begin{align*}
+F(X) &amp;= P(F^{-1} \leq x)  \\
+     &amp;= P(F(F^{-1}(U)) \leq F(x)) \\  
+     &amp;= P(U \leq F(x))  \\
+     &amp;= F(x)  \\
+\end{align*}
+\]</span></p>
+<p><strong>(b)</strong></p>
+<p>Here we want to show that if <span class="math inline">\(Y = -log(U)\)</span>, then <span class="math inline">\(Y\)</span> ~ <span class="math inline">\(Exp(1)\)</span>.</p>
+<p><span class="math display">\[
+\begin{align*}
+P(Y \leq y) &amp;= P(-log(U) \leq y) \\
+            &amp;= P(U \gt e^{-y}) \\
+            &amp;= 1 - P(U \leq e^{-y}) \\
+            &amp;= 1 - e^{-y} \\
+\end{align*}
+\]</span></p>
+<p>Which we can see is the CDF of the exponential distribution with mean 1.</p>
+<p><strong>(c)</strong></p>
+<pre class="r"><code>mean(-log(runif(n=1000)))</code></pre>
+<pre><code>[1] 1.011809</code></pre>
+<pre class="r"><code>plot(ecdf(-log(runif(n=1000))))
+plot(ecdf(rexp(n=1000)), add=T, col=&quot;red&quot;)</code></pre>
+<p><img src="figure/hw1.Rmd/problem-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="problem-3" class="section level2">
+<h2>Problem 3</h2>
+<p><strong>(a)</strong></p>
+<p>We know that, <span class="math inline">\(T_{2}\)</span> ~ <span class="math inline">\(Exp(\lambda)\)</span>, <span class="math inline">\(\lambda = \frac{1}{2N}\)</span>, <span class="math inline">\(E[T_{2}] = 2N\)</span>, and <span class="math inline">\(\pi\)</span>|<span class="math inline">\(T_{2}\)</span> ~ <span class="math inline">\(Pois(\lambda)\)</span> where <span class="math inline">\(\lambda = 2 \mu T_{2}\)</span>.</p>
+<p>We also know that <span class="math inline">\(E[X] = E[E[X|Y]]\)</span>. By the law of total expectation we can then derive <span class="math inline">\(E[\pi]\)</span>.</p>
+<p><span class="math display">\[
+\begin{align*}
+E[\pi] &amp;= E[E[\pi|T_{2}]] \\
+       &amp;= E[2 \mu T_{2}]  \\
+       &amp;= 2 \mu E[T_{2}]  \\
+       &amp;= 2 \mu \cdot 2N  \\
+       &amp;= 4 \mu N \\
+\end{align*}
+\]</span></p>
+<p><strong>(b)</strong></p>
+<p><span class="math display">\[
+\begin{align*}
+Var[\pi] &amp;= E[Var(\pi|T_{2})] + Var[E(\pi|T_{2})] \\
+         &amp;= E(2 \mu T_{2}) + Var(2 \mu T_{2}) \\
+         &amp;= 2 \mu E[T_{2}] + 4 \mu^{2}Var(T_{2}) \\
+         &amp;= 4N \mu + (4N \mu)^{2} \\
+\end{align*}
+\]</span></p>
+<p><strong>(c)</strong></p>
+<p>The relationship does not hold for the number of differences between two seuqnces sampled from a population. THe variance is greater than expected.</p>
+</div>
+<div id="problem-4" class="section level2">
+<h2>Problem 4</h2>
+<p><strong>(a)</strong></p>
+<p>If <span class="math inline">\(X_{1}\)</span> ~ <span class="math inline">\(Pois(\lambda_{1})\)</span> and <span class="math inline">\(X_{2}\)</span> ~ <span class="math inline">\(Pois(\lambda_{2})\)</span>, then what is <span class="math inline">\(X_{1} + X_{2}\)</span>?</p>
+<p><span class="math display">\[
+\begin{align*}
+P(Y = n) &amp;= P(X_{1} + X_{2} = n) \\
+         &amp;= \sum_{k=0}^{n} P(X_{1} = k)P(X_{2} = n - k) \\
+         &amp;= \sum_{k=0}^{n} \frac{\lambda_{1}^{k}e^{-\lambda_{1}}}{k!} \frac{\lambda_{2}^{n-k}e^{-\lambda_{2}}}{(n - k)!} \\
+         &amp;= \frac{e^{(-\lambda_{1} - \lambda_{2})}}{n!} \sum_{k=0}^{n} \binom{n}{k}\lambda_{1}^{k}\lambda_{2}^{n-k} \\
+         &amp;= \frac{(\lambda_{1} + \lambda_{2})^{n} e^{-(\lambda_{1} + \lambda_{2})}}{n!} \\
+\end{align*}
+\]</span></p>
+<p>Thus we can see that, <span class="math inline">\(X_{1} + X_{2}\)</span> ~ <span class="math inline">\(Pois(\lambda_{1} + \lambda_{2})\)</span></p>
+<p><strong>(b)</strong></p>
+<p>What is <span class="math inline">\(P(X_{1} = k | X_{1} + X_{2} = n)\)</span>?</p>
+<p>Set <span class="math inline">\(Y = X_{1} + X_{2}\)</span>, then</p>
+<p><span class="math display">\[
+\begin{align*}
+P(X_{1} = k | Y = n) &amp;= \frac{P((X_{1} = k) \bigcap (Y = n))}{P(Y = n)} \\
+                     &amp;= \frac{P(X_{1} = k) P(W = n - k)}{P(Y = n)} \\
+                     &amp;= \sum_{k=0}^{n} \binom{n}{k}\left(\frac{\lambda_{1}}{\lambda_{1} + \lambda_{2}}\right)^{k}\left(1 - \frac{\lambda_{1}}{\lambda_{1} - \lambda_{2}}\right)^{n - k}
+\end{align*}
+\]</span></p>
+<p>Thus, <span class="math inline">\(X_{1}\)</span> ~ <span class="math inline">\(Binom(n, \frac{\lambda_{1}}{\lambda_{1} + \lambda_{2}})\)</span></p>
+</div>
+<div id="problem-5" class="section level2">
+<h2>Problem 5</h2>
+<p>We are given,</p>
+<p><span class="math display">\[
+\widehat{\mu}_{m} = \frac{1}{m} \sum_{i=1}^{m} X_{i}
+\]</span></p>
+<p><strong>(a)</strong></p>
+<p><span class="math display">\[
+Var[\widehat{\mu}_{m}] = E[(\widehat{\mu}_{m} - \mu^{2})] = \frac{\sigma^{2}}{m}
+\]</span></p>
+<p><strong>(b)</strong></p>
+<p><span class="math display">\[
+Var[X] = \frac{1}{m} \sum_{i=1}^{m} X_{i}^{2} - \left(\sum_{i=1}^{m} X_{i}\right)^{2} = \widehat{\sigma}_{m}^{2}
+\]</span></p>
+<p><strong>(c)</strong></p>
+<p><span class="math display">\[
+Var[\widehat{\mu}_{m}] = \frac{1}{m} \sum_{i = 1}^{m} \left(X_{i} - \widehat{\mu}_{m}\right)^{2}
+\]</span></p>
+<p><strong>(d)</strong></p>
+<p>Unbiased.</p>
+</div>
+<div id="problem-6" class="section level2">
+<h2>Problem 6</h2>
+<p><strong>(a)</strong></p>
+<center>
+<img src="graph.png" alt="Graph" />
+</center>
+<p><strong>(b)</strong></p>
+<ol style="list-style-type: lower-roman">
+<li>Yes</li>
+<li>No</li>
+<li>Yes</li>
+</ol>
+<p><strong>(c)</strong></p>
+<p><span class="math display">\[
+E[X_{2}] = E[E[X_{2}|X_{1},N_{1}]] = E[X_{1}] = np
+\]</span></p>
+<center>
+<span class="math inline">\(X\)</span> ~ <span class="math inline">\(Binom(N, \frac{X_{1}}{N_{1}})\)</span>
+</center>
+<p><strong>(d)</strong></p>
+<pre class="r"><code>simulation &lt;- function(n, p, r, s) {
+  
+  # generate matrices
+  X &lt;- matrix(data=0,nrow=r,ncol=s)
+  N &lt;- matrix(data=0,nrow=r,ncol=s)
+  
+  # generate initial values
+  X[,1] &lt;- rbinom(r, n, p)
+  N[,1] &lt;- rpois(r, n)
+  
+  # loop through number of nodes
+  for (i in 2:s) {
+    probs &lt;- X[,i - 1] / N[,i - 1]
+    N[,i] &lt;- rpois(r, X[,i - 1])
+    X[,i] &lt;- rbinom(r, N[, i - 1], replace(probs, probs &gt; 1, 1))
+  }
+  
+  return(list(X=X,N=N))
+}
+
+# run simulation
+results &lt;- simulation(500,0.5,1000,4)</code></pre>
+<p><strong>(e)</strong></p>
+<pre class="r"><code>mean(results$X[,2])</code></pre>
+<pre><code>[1] 249.848</code></pre>
+<p><strong>(f)</strong></p>
+<pre class="r"><code>sum(results$X[,4] &gt; results$X[,1])/1000</code></pre>
+<pre><code>[1] 0.167</code></pre>
+<p><strong>(g)</strong></p>
+<p>I would expect the proability to be lower for <span class="math inline">\(X_{4}\)</span> than for <span class="math inline">\(X_{1}\)</span> the majority of the time due to the large mean and variance for Poisson random variables that you are dividing binomail random variables by to generate an updated probaility of success for future binomial random variables. This says that the number of copies of an allele in a population that changes stochastically over time will tend to zero in this format.</p>
+</div>
+<div id="problem-7" class="section level2">
+<h2>Problem 7</h2>
+<p>We are given the simple chain graph <span class="math inline">\(X_{1} \rightarrow X_{2} \rightarrow X_{3} \rightarrow X_{4}\)</span>.</p>
+<p><strong>(a)</strong></p>
+<p>What is <span class="math inline">\(P(X_{1} = 0, X_{4} = 2)\)</span>?</p>
+<p><span class="math display">\[
+\begin{align*}
+P(X_{1}, X_{4}) &amp;= \sum_{X_{2}} \sum_{X_{3}} P(X_{1} \cdots X_{4}) \\
+                &amp;= \sum_{X_{2}} \sum_{X_{3}} P(X_{1}) P(X_{2}|X_{1}) P(X_{3}|X_{2}) P(X_{4}|X_{3}) \\
+                &amp;= P(X_{1}) \sum_{X_{2}} P(X_{2}|X_{1}) \sum_{X_{3}} P(X_{3}|X_{2}) P(X_{4}|X_{3}) \\
+                &amp;= P(X_{1}) \sum_{X_{2}} P(X_{2}|X_{1}) m_{3}(X_{2}) \\ 
+                &amp;= P(X_{1}) m_{2}(X_{1}) \\
+\end{align*}
+\]</span></p>
+<p><strong>(b)</strong></p>
+<p><span class="math display">\[
+P(X_{1} = 0, X_{4} = 2) = 0
+\]</span></p>
+</div>
+<div id="session-information" class="section level2">
+<h2>Session Information</h2>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.3.1 (2016-06-21)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: Ubuntu 16.04.1 LTS
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] workflowr_0.2.0 rmarkdown_1.3  
+
+loaded via a namespace (and not attached):
+ [1] backports_1.0.4 magrittr_1.5    rprojroot_1.1   htmltools_0.3.5
+ [5] tools_3.3.1     yaml_2.1.14     Rcpp_0.12.6     stringi_1.1.1  
+ [9] knitr_1.15.1    git2r_0.18.0    stringr_1.1.0   digest_0.6.11  
+[13] evaluate_0.10  </code></pre>
+</div>
+
+<hr>
+<p>
+    This site was created with <a href="http://rmarkdown.rstudio.com">R Markdown</a>
+</p>
+<hr>
+
+<!-- To enable disqus, uncomment the section below and provide your disqus_shortname -->
+
+<!-- disqus
+  <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'rmarkdown'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+-->
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
