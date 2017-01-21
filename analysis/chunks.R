@@ -5,8 +5,9 @@
 knitr::opts_chunk$set(
   comment = NA,
   fig.align = "center",
-  tidy = FALSE,
-  fig.path = paste0("figure/", knitr::current_input(), "/")
+  tidy = TRUE,
+  fig.path = paste0("figure/", knitr::current_input(), "/"),
+  cache = FALSE
 )
 
 # ---- session-info ----

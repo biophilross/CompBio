@@ -2,7 +2,7 @@
 title: "HW1"
 author: "Philipp Ross"
 date: '2017-01-10'
-output: html_document
+output: pdf_document
 ---
 
 ```{r read-chunk, include=FALSE, cache=FALSE}
