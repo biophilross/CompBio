@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Philipp Ross" />
+
+
+<title>HW3</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 54px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+
+.section h2 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h3 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h4 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h5 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h6 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = false;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Fundamentals of Computational Biology</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/jdblischak/workflowr">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">HW3</h1>
+<h4 class="author"><em>Philipp Ross</em></h4>
+<h4 class="date"><em>2017-24-01</em></h4>
+
+</div>
+
+
+<p><strong>Last updated:</strong> 2017-01-24</p>
+<p><strong>Code version:</strong> 529c99e</p>
+<div id="a.-discrete-time-markov-chains" class="section level2">
+<h2>A. Discrete Time Markov Chains</h2>
+<div id="classification-of-state-and-chains" class="section level3">
+<h3>Classification of state and chains</h3>
+<p><img src="figure/hw3.Rmd/unnamed-chunk-1-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This chain is composed of one class and it is recurrent.</p>
+<p><img src="figure/hw3.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This chain is composed of two classes and they are both recurrent.</p>
+<p><img src="figure/hw3.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This chain is composed of three classes: one transient and two recurrent.</p>
+<p><img src="figure/hw3.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /> This chain is composed of four classes: two transient and two recurrent.</p>
+</div>
+<div id="proportion-of-trucks-on-the-road" class="section level3">
+<h3>Proportion of trucks on the road</h3>
+<p>We can build a matrix based on the information given that indicates the probability of transitioning between a car or truck. We can then use eigendecomposition in order to compute the stationary distribution of this markov chain to determine the fraction of vehicles on the road that are trucks.</p>
+<p>The stationary distribution has the property <span class="math inline">\(\pi^{T} = \pi^{T}P\)</span>.</p>
+<pre class="r"><code>library(MASS)
+# define probability transition matrix
+m &lt;- matrix(c(1/4, 1/5, 3/4, 4/5), nrow = 2, ncol = 2)
+
+# calculate eigenvalues and eigenvectors
+eg &lt;- eigen(m)
+rvec &lt;- eg$vectors
+lvec &lt;- ginv(eg$vectors)
+vals &lt;- eg$values
+# this should return the original matrix
+rvec %*% diag(vals) %*% ginv(rvec)</code></pre>
+<pre><code>     [,1] [,2]
+[1,] 0.25 0.75
+[2,] 0.20 0.80</code></pre>
+<pre class="r"><code># and this should output the stationary distribution
+lvec[1, ]/sum(lvec[1, ])</code></pre>
+<pre><code>[1] 0.2105263 0.7894737</code></pre>
+<p>Thus we can see that 21% of vehicles on the road are trucks, while 79% are cars.</p>
+<p>We can also turn this into a function to use for later:</p>
+<pre class="r"><code>calc.stat.dist &lt;- function(P) {
+    
+    # calculate eigenvalues and eigenvectors
+    eg &lt;- eigen(P)
+    rvec &lt;- eg$vectors
+    lvec &lt;- ginv(eg$vectors)
+    vals &lt;- eg$values
+    
+    # this should return the original matrix
+    # stopifnot(rvec%*%diag(vals)%*%ginv(rvec) == P)
+    
+    # and this should output the stationary distribution
+    return(lvec[1, ]/sum(lvec[1, ]))
+}</code></pre>
+</div>
+<div id="how-many-shoes-to-own" class="section level3">
+<h3>How many shoes to own?</h3>
+<p>If we consider four different possibilities that include F:F, F:B, B:F, and B:B in terms of leaving to go on the run and returning we can calculate the probability of running barefoot for small values of k by generating a probability transition matrix anf finding the stationary distribution.</p>
+<p>For k = 2:</p>
+<pre class="r"><code>P &lt;- matrix(c(c(3/4, 1/4, 0), c(1/4, 1/2, 1/4), c(0, 1/4, 3/4)), nrow = 3)
+S &lt;- calc.stat.dist(P)
+S[1]</code></pre>
+<pre><code>[1] 0.3333333</code></pre>
+<p>For k = 3:</p>
+<pre class="r"><code>P &lt;- matrix(c(c(3/4, 1/4, 0, 0), c(1/4, 1/2, 1/4, 0), c(0, 1/4, 1/2, 1/4), c(0, 
+    0, 1/4, 3/4)), nrow = 4)
+S &lt;- calc.stat.dist(P)
+S[1]</code></pre>
+<pre><code>[1] 0.25</code></pre>
+<p>For k = 4:</p>
+<pre class="r"><code>P &lt;- matrix(c(c(3/4, 1/4, 0, 0, 0), c(1/4, 1/2, 1/4, 0, 0), c(0, 1/4, 1/2, 1/4, 
+    0), c(0, 0, 1/4, 1/2, 1/4), c(0, 0, 0, 1/4, 3/4)), nrow = 5)
+S &lt;- calc.stat.dist(P)
+S[1]</code></pre>
+<pre><code>[1] 0.2</code></pre>
+<p>So we can see that the probability of running barefoot with K shoes is going to be <span class="math inline">\(\frac{1}{k+1}\)</span>.</p>
+</div>
+<div id="time-reversibility" class="section level3">
+<h3>Time reversibility</h3>
+<p>A time reversible Markov chain is one where the states are traversered similarly from start to finish as from finish to start. Mathematically we can write this as <span class="math inline">\(P_{ij} = \frac{\pi_{j}P_{ji}}{\pi_{i}}\)</span>. This states that the probability of moving from state <span class="math inline">\(i\)</span> to state <span class="math inline">\(j\)</span> is equal to the stationary probability of being in state <span class="math inline">\(i\)</span>, times the probability of moving from state <span class="math inline">\(j\)</span> to state <span class="math inline">\(i\)</span>, all over the stationary probability of being in state <span class="math inline">\(j\)</span>.</p>
+<p>We can check this for all of our transitions:</p>
+<pre class="r"><code>P &lt;- matrix(c(c(0, 1/2, 1/2), c(1/4, 1/2, 1/4), c(1/4, 1/4, 1/2)), nrow = 3)
+S &lt;- calc.stat.dist(P)
+
+(S[1] * P[1, 2])/S[2]</code></pre>
+<pre><code>[1] 0.25</code></pre>
+<pre class="r"><code>P[2, 1]</code></pre>
+<pre><code>[1] 0.5</code></pre>
+<pre class="r"><code>(S[1] * P[1, 3])/S[3]</code></pre>
+<pre><code>[1] 0.25</code></pre>
+<pre class="r"><code>P[3, 1]</code></pre>
+<pre><code>[1] 0.5</code></pre>
+<pre class="r"><code>(S[2] * P[2, 3])/S[3]</code></pre>
+<pre><code>[1] 0.25</code></pre>
+<pre class="r"><code>P[3, 2]</code></pre>
+<pre><code>[1] 0.25</code></pre>
+<p>Based on these examples, we can see that this markov chain is indeed time reversible.</p>
+</div>
+<div id="sequence-of-nucleotides" class="section level3">
+<h3>Sequence of nucleotides</h3>
+<p>We’re given the following probability matrix that represents the probability of transitioning between different nucleotides:</p>
+<pre class="r"><code>P &lt;- matrix(c(0.1, 0.35, 0.3, 0.6, 0.8, 0.1, 0.2, 0.1, 0.05, 0.1, 0.2, 0.25, 
+    0.05, 0.45, 0.3, 0.05), nrow = 4)</code></pre>
+<p><strong>(a)</strong></p>
+<p>The probability of observing “TATA” under this model can be found by calculating the stationary distribution and then multiplying the probabilites of transitioning between states “T”, “A”, “T”, and “A”. <span class="math inline">\(0.30 \cdot 0.318 \cdot 0.30 \cdot 0.318 =\)</span> 0.001709.</p>
+<p><strong>(b)</strong></p>
+<p>First let’s define a function to simulate a discrete markov chain:</p>
+<pre class="r"><code># simulate discrete Markov chains according to transition matrix P
+run.mc.sim &lt;- function(P, num.iters = 50) {
+    
+    # number of possible states
+    num.states &lt;- nrow(P)
+    
+    # stores the states X_t through time
+    states &lt;- numeric(num.iters)
+    
+    # initialize variable for first state
+    states[1] &lt;- 1
+    
+    for (t in 2:num.iters) {
+        
+        # probability vector to simulate next state X_{t+1}
+        p &lt;- P[states[t - 1], ]
+        
+        ## draw from multinomial and determine state
+        states[t] &lt;- which(rmultinom(1, 1, p) == 1)
+        
+    }
+    
+    return(states)
+}</code></pre>
+<p>Now we will simulate this 10,000 times, followed by another 10,000 times where we sample every 100th base:</p>
+<pre class="r"><code>num.iterations &lt;- 20000
+
+# simulate chains
+chain.states &lt;- run.mc.sim(P, num.iters = num.iterations)
+chain.states &lt;- chain.states[10001:20000][seq(0, 10000, 100)]</code></pre>
+<pre class="r"><code>matplot(chain.states, type = &quot;l&quot;, lty = 1, col = 1:5, ylim = c(0, 5), ylab = &quot;state&quot;, 
+    xlab = &quot;time&quot;)
+abline(h = 1, lty = 3)
+abline(h = 4, lty = 3)</code></pre>
+<p><img src="figure/hw3.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>We can see in the above plot of every 100th base what the probabilities were. Let’s calculate them individually:</p>
+<pre class="r"><code>table(chain.states)/100</code></pre>
+<pre><code>chain.states
+   1    2    3    4 
+0.26 0.30 0.12 0.32 </code></pre>
+<p>And compare those to the stationary distribution calculated using eigendecomposition:</p>
+<pre class="r"><code>calc.stat.dist(P)</code></pre>
+<pre><code>[1] 0.3181481+0i 0.3356581-0i 0.1295444+0i 0.2166494+0i</code></pre>
+<p>They look pretty similar!</p>
+<p><strong>(c)</strong></p>
+<p>We can find the expected number of bases before observing “AACC” by simulating the markov chain many times and estimating the expectation.</p>
+<pre class="r"><code>num.chains &lt;- 10000
+num.iterations &lt;- 100
+
+chain.states &lt;- matrix(NA, ncol = num.chains, nrow = num.iterations)
+
+for (c in seq_len(num.chains)) {
+    chain.states[, c] &lt;- run.mc.sim(P, num.iters = num.iterations)
+}</code></pre>
+<p>We can then search through the various simulations and search for the desired sequences:</p>
+<pre class="r"><code>library(stringr)
+results &lt;- apply(chain.states, 2, function(x) {
+    str_locate(pattern = &quot;1133&quot;, paste(x, collapse = &quot;&quot;))
+})
+successes &lt;- results[!is.na(results)]
+sum(successes)/length(successes)</code></pre>
+<pre><code>[1] 49.85606</code></pre>
+</div>
+<div id="maximum-likelihood-estimation-for-a-markov-transition-matrix" class="section level3">
+<h3>Maximum likelihood estimation for a Markov transition matrix</h3>
+<p>Not sure where we were supposed to get the data for this one so I’ll generate it myself?</p>
+<pre class="r"><code># simulated binary observations
+m &lt;- rbinom(1000, size = 1, prob = 0.3)</code></pre>
+<p>First we want to fit a Bernoulli model to the data:</p>
+<pre class="r"><code>l &lt;- function(X, p) {
+    ns &lt;- sum(X)
+    return(log(p^(ns) * (1 - p)^(length(X) - ns)))
+}
+
+num.steps &lt;- 100
+sim.results &lt;- numeric(num.steps)
+pvec &lt;- seq(0.01, 1, 0.01)
+
+for (i in seq_len(num.steps)) {
+    sim.results[i] &lt;- l(m, pvec[i])
+}
+
+plot(pvec, sim.results, type = &quot;l&quot;)</code></pre>
+<p><img src="figure/hw3.Rmd/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" /> We can see that the likelihood maximizes for 0.3, which is the value of <span class="math inline">\(p\)</span> used to simulate the data.</p>
+<p>We can then use this value of p to create a maximum likelihood estimate for the probability transition matrix, simulate the markov chain, and calculate the likelihood of the states.</p>
+<pre class="r"><code>P &lt;- matrix(c(c(0.7, 0.3), c(0.7, 0.3)), nrow = 2)
+
+iters &lt;- 1000
+
+states &lt;- run.mc.sim(P, num.iters = iters)
+
+l(states - 1, 0.3)</code></pre>
+<pre><code>[1] -Inf</code></pre>
+</div>
+</div>
+<div id="b.-bayesian-inference" class="section level2">
+<h2>B. Bayesian Inference</h2>
+<div id="exercises-from-likelihood-ratio-how-big-is-convincing" class="section level3">
+<h3>Exercises from “Likelihood ratio: how big is convincing?”</h3>
+<pre class="r"><code>#&#39; Simulate medical screening
+#&#39;
+#&#39; Outputs simulated data about protein concentration for diseased and non-diseased individuals
+#&#39;
+#&#39; @param n number of individuals
+#&#39; @param p proportion diseased
+#&#39;
+#&#39; @return n by 2 matrix where column 1 (x) is protein concentration and column two (z) is disease indicator
+#&#39;
+#&#39; @example sim.screen(100,0.3)
+#&#39;
+sim.screen &lt;- function(n, p) {
+    m &lt;- matrix(0, nrow = n, ncol = 2)
+    for (i in seq_len(n)) {
+        z &lt;- rbinom(n = 1, size = 1, prob = p)
+        ifelse(z == 1, x &lt;- rgamma(n = 1, scale = 1, shape = 2), x &lt;- rgamma(n = 1, 
+            scale = 0.5, shape = 2))
+        m[i, 1] &lt;- x
+        m[i, 2] &lt;- z
+    }
+    return(m)
+}
+#&#39; Calculate the likelihood of screening data
+#&#39;
+#&#39; Outputs the likelihood ratio of normal to diseased models
+#&#39;
+#&#39; @param m n by 2 medical screen data matrix
+#&#39;
+#&#39; @return m n by 3 data matrix where the third column are the likelihood ratios
+#&#39;
+#&#39; @example l.screen(m)
+#&#39;
+l.screen &lt;- function(m) {
+    nm &lt;- matrix(0, nrow = nrow(m), ncol = 3)
+    nm[, 1] &lt;- m[, 1]
+    nm[, 2] &lt;- m[, 2]
+    nm[, 3] &lt;- dgamma(m[, 1], scale = 0.5, shape = 2)/dgamma(m[, 1], scale = 1, 
+        shape = 2)
+    return(nm)
+}</code></pre>
+<p>We can use these functions to find out what value of c is most appropriate to classify a patient as diseased or not diseased</p>
+<pre class="r"><code>m &lt;- sim.screen(1000, 0.2)
+m &lt;- l.screen(m)
+
+cvec &lt;- seq(0.1, 10, length = 100)
+
+misclass &lt;- sapply(cvec, function(c) {
+    # how often is the classification incorrect?
+    sum(m[, 2] == as.numeric(m[, 3] &gt; c))/nrow(m)
+})
+
+theo.misclass &lt;- sapply(cvec, function(c) {
+    0.2 * c/((0.8) + 0.2 * c)
+})
+
+plot(log10(cvec), misclass, xlab = &quot;Misclassifications&quot;, ylab = &quot;Log10(c)&quot;, 
+    ylim = c(0, 1))
+points(log10(cvec), theo.misclass, col = &quot;red&quot;)</code></pre>
+<p><img src="figure/hw3.Rmd/unnamed-chunk-23-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>We can redo this simulation for a lower proportion of diseased individuals as well:</p>
+<pre class="r"><code>m &lt;- sim.screen(1000, 0.02)
+m &lt;- l.screen(m)
+
+cvec &lt;- seq(0.1, 10, length = 100)
+
+misclass &lt;- sapply(cvec, function(c) {
+    # how often is the classification incorrect?
+    sum(m[, 2] == as.numeric(m[, 3] &gt; c))/nrow(m)
+})
+
+theo.misclass &lt;- sapply(cvec, function(c) {
+    0.02 * c/((0.98) + 0.02 * c)
+})
+
+plot(log10(cvec), misclass, xlab = &quot;Misclassifications&quot;, ylab = &quot;Log10(c)&quot;, 
+    ylim = c(0, 1))
+points(log10(cvec), theo.misclass, col = &quot;red&quot;)</code></pre>
+<p><img src="figure/hw3.Rmd/unnamed-chunk-24-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="example-of-conjugacy-for-poisson-distribution" class="section level3">
+<h3>Example of conjugacy for Poisson distribution</h3>
+<p>We can first show that the Gamma distribution is the conjugate prior for the Poisson likelihood:</p>
+<p><span class="math display">\[
+P(\vec{X}|\lambda)P(\lambda) \propto P(\lambda|\vec{X}) \\
+P(\vec{X}|\lambda) = \frac{e^{-n\lambda} \lambda^{\sum x_{i}}}{\prod_{i=1}^{n}x_{i}} \\
+P(\lambda) = \frac{\beta^{\alpha}}{\Gamma(\alpha)}\lambda^{\alpha-1}e^{-\lambda \beta} \\
+P(\lambda|\vec{X}) \propto \lambda^{\sum x_{i} + \alpha - 1}e^{-(n + \beta)\lambda}
+\]</span></p>
+<p>From this we can see that <span class="math inline">\(P(\lambda|\vec{X})\)</span> ~ <span class="math inline">\(Gamma(\sum x_{i} + \alpha, n + \beta)\)</span>.</p>
+<p>If we no consider that prior our prior parameters and data are <span class="math inline">\(\alpha=\beta=1\)</span> and <span class="math inline">\(\vec{X} = [0,2,1,4,2,0,0,2]\)</span>, then we get the following:</p>
+<p><span class="math display">\[
+p(\lambda|\vec{X}) \propto \lambda^{10+\alpha}e^{-(8+\beta)\lambda}
+\]</span> Which is distributed as a <span class="math inline">\(Gamma(11,9)\)</span> distribution. To find the 90% credible interval we want to know where <span class="math inline">\(P(a &lt; \lambda &lt; b) = 0.9\)</span>. We can do this by applying a transformation to the Gamma distributed random variable <span class="math inline">\(\lambda\)</span>.</p>
+<p>If <span class="math inline">\(\lambda\)</span> ~ <span class="math inline">\(Gamma(\alpha, \beta)\)</span>, then <span class="math inline">\(\frac{2\lambda}{\alpha}\)</span> ~ <span class="math inline">\(\chi^{2}(2\beta)\)</span>. Now our probability statement reads <span class="math inline">\(P(\frac{2a}{11} &lt; Z &lt; \frac{2b}{11}) = 0.9\)</span>. Using a standard chi-squared table for <span class="math inline">\(Z = \chi^{2}(18)\)</span>, we can find that <span class="math inline">\(a =\)</span> 101.7115 and <span class="math inline">\(b =\)</span> 240.7515.</p>
+</div>
+</div>
+<div id="session-information" class="section level2">
+<h2>Session Information</h2>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.3.2 (2016-10-31)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: OS X El Capitan 10.11.6
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] stringr_1.1.0        MASS_7.3-45          statnet_2016.9      
+ [4] sna_2.4              ergm.count_3.2.2     tergm_3.4.0         
+ [7] networkDynamic_0.9.0 ergm_3.6.1           network_1.13.0      
+[10] statnet.common_3.3.0
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_0.12.4       workflowr_0.3.0   knitr_1.15.1     
+ [4] magrittr_1.5      lattice_0.20-34   tools_3.3.2      
+ [7] parallel_3.3.2    grid_3.3.2        nlme_3.1-128     
+[10] lpSolve_5.6.13    coda_0.19-1       git2r_0.18.0     
+[13] htmltools_0.3.5   yaml_2.1.14       rprojroot_1.2    
+[16] digest_0.6.9      Matrix_1.2-7.1    formatR_1.4      
+[19] trust_0.1-7       robustbase_0.92-7 evaluate_0.10    
+[22] rmarkdown_1.3     stringi_1.1.2     DEoptimR_1.0-8   
+[25] backports_1.0.5  </code></pre>
+</div>
+
+<hr>
+<p>
+    This site was created with <a href="http://rmarkdown.rstudio.com">R Markdown</a>
+</p>
+<hr>
+
+<!-- To enable disqus, uncomment the section below and provide your disqus_shortname -->
+
+<!-- disqus
+  <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'rmarkdown'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+-->
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

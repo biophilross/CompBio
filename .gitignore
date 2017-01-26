@@ -6,4 +6,3 @@ data
 analysis/figure
 analysis/*html
 packrat/lib*/
-packrat/src/

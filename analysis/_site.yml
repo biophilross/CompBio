@@ -1,7 +1,7 @@
 name: Fundamentals of Computational Biology
 output_dir: "../docs"
 include: [".nojekyll"]
-exclude: ["include"]
+exclude: [" include"]
 navbar:
   title: Fundamentals of Computational Biology
   left:
@@ -14,13 +14,13 @@ navbar:
   right:
     - icon: fa-github
       href: https://github.com/jdblischak/workflowr
-output:
-  html_document:
-    toc: true
-    toc_float:
-      collapsed: true
-      smooth_scroll: false
-    theme: lumen
-    highlight: textmate
-    include:
-      after_body: include/footer.html
+#output:
+#  html_document:
+#    toc: true
+#    toc_float:
+#      collapsed: true
+#      smooth_scroll: false
+#    theme: lumen
+#    highlight: textmate
+#    include:
+#      after_body: include/footer.html
