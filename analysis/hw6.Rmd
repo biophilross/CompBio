@@ -25,25 +25,25 @@ The updates in the Baum- Welch (EM) algorithm depend on a few key terms listed b
 **(a)**
 
 $$
-E[#t_{ij}(Q)|\lambda(t),O]
+E[\#t_{ij}(Q)|\lambda(t),O] = \sum_{t=1}^{T}\frac{\alpha_{i}(t)a[x_{i},x_j]b[x_{j},o_{t+1}]\beta_{j}(t+1)}{\sum_{i=1}^{n}\alpha_{}(T)}
 $$
 
 **(b)**
 
 $$
-E[#o_{ij}(Q)|\lambda(t),O]
+E[\#o_{ij}(Q)|\lambda(t),O] = 
 $$
 
 **(c)**
 
 $$
-E[#times in state i|\lambda(t), O] = n \sum_{i=1}^{n} \alpha_{i}(j) \beta_{i}(j)
+E[\#times\ in\ state\ i|\lambda(t), O] = n \sum_{i=1}^{n} \alpha_{i}(j) \beta_{i}(j)
 $$
 
 **(d)**
 
 $$
-P(Q_{1} =i|\lambda(t),O)
+P(Q_{1} =i|\lambda(t),O) = \frac{\alpha_{i}(t)\beta_{i}(t)}{\sum_{i=1}^{n}\alpha_{}(T)}
 $$
 
 ## Problem 2
