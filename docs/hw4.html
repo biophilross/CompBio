@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Philipp Ross" />
+
+<meta name="date" content="2017-12-01" />
+
+<title>HW4</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 54px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+
+.section h2 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h3 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h4 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h5 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h6 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = false;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Fundamentals of Computational Biology</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/jdblischak/workflowr">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">HW4</h1>
+<h4 class="author"><em>Philipp Ross</em></h4>
+<h4 class="date"><em>2017-30-01</em></h4>
+
+</div>
+
+
+<p><strong>Last updated:</strong> 2017-03-09</p>
+<p><strong>Code version:</strong> e75cac0</p>
+<div id="simple-metropolis-hastings-algorithm" class="section level2">
+<h2>Simple Metropolis-Hastings Algorithm</h2>
+<div id="example-1" class="section level3">
+<h3>Example 1</h3>
+<p>First we’ll define the necessary functions and code:</p>
+<pre class="r"><code># target functionc
+target &lt;- function(x) {
+    if (x &lt; 0) {
+        return(0)
+    } else {
+        return(exp(-x))
+    }
+}
+
+# MCMC function
+easyMCMC &lt;- function(niter, startval, proposalsd) {
+    x &lt;- rep(0, niter)
+    x[1] &lt;- startval
+    for (i in 2:niter) {
+        currentx &lt;- x[i - 1]
+        proposedx &lt;- rnorm(1, mean = currentx, sd = proposalsd)
+        A &lt;- ifelse(!target(currentx), 1, target(proposedx)/target(currentx))
+        if (runif(1) &lt; A) {
+            x[i] = proposedx
+        } else {
+            x[i] = currentx
+        }
+    }
+    return(x)
+}</code></pre>
+<p><strong>(a)</strong></p>
+<p>Now let’s test how different starting values effect the simulation results:</p>
+<pre class="r"><code>z1 &lt;- easyMCMC(1000, 5, 1)
+z2 &lt;- easyMCMC(1000, 50, 1)
+z3 &lt;- easyMCMC(1000, 100, 1)
+
+plot(z3, type = &quot;l&quot;)
+lines(z1, col = 2)
+lines(z2, col = 3)</code></pre>
+<p><img src="figure/hw4.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>We can see here that the starting values can effect how long it takes for the markov chain to reach its stationary distribution. The longer the simulation takes to reach stationary distribution, the less values are actually being sampled from the desired distribution.</p>
+<p><strong>(b)</strong></p>
+<pre class="r"><code>z1 &lt;- easyMCMC(1000, 5, 1)
+z2 &lt;- easyMCMC(1000, 5, 10)
+z3 &lt;- easyMCMC(1000, 5, 100)
+
+plot(z1, type = &quot;l&quot;)</code></pre>
+<p><img src="figure/hw4.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(z2, col = 2, type = &quot;l&quot;)</code></pre>
+<p><img src="figure/hw4.Rmd/unnamed-chunk-3-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(z3, col = 3, type = &quot;l&quot;)</code></pre>
+<p><img src="figure/hw4.Rmd/unnamed-chunk-3-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>When the standard deviation becomes to large, too many proposed moves are rejected and you don’t actually allow the simulation to sample the the desired distribution properly.</p>
+<p><strong>(c)</strong></p>
+<p>Let’s redfine the target function, run the simulations with small standards of deviation and see what the target distribution looks like:</p>
+<pre class="r"><code>target &lt;- function(x) {
+    return(as.numeric(x &gt; 0 &amp; x &lt; 1) + as.numeric(x &gt; 2 &amp; x &lt; 3))
+}
+
+z1 &lt;- easyMCMC(10000, 3, 1)
+z2 &lt;- easyMCMC(10000, 3, 0.1)
+
+hist(z1)</code></pre>
+<p><img src="figure/hw4.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>hist(z2)</code></pre>
+<p><img src="figure/hw4.Rmd/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>When the standard deviation is too small, we again don’t sample the target distribution properly, but this time it’s because we aren’t moving far away enough from our initial value.</p>
+</div>
+<div id="example-2" class="section level3">
+<h3>Example 2</h3>
+<p>First we define the code for estimating allele frequencies:</p>
+<pre class="r"><code># uniform prior
+prior &lt;- function(p) {
+    if ((p &lt; 0) || (p &gt; 1)) {
+        return(0)
+    } else {
+        return(1)
+    }
+}
+# likelihood of allele frequencies in the population based on a
+# Hardy-Weinburg Equilibrium model
+likelihood &lt;- function(p, nAA, nAa, naa) {
+    return(p^(2 * nAA) * (2 * p * (1 - p))^nAa * (1 - p)^(2 * naa))
+}
+# allele frequencing sampling MCMC
+psamplerMCMC &lt;- function(nAA, nAa, naa, niter, pstartval, pproposalsd) {
+    p &lt;- rep(0, niter)
+    p[1] &lt;- pstartval
+    for (i in 2:niter) {
+        currentp &lt;- p[i - 1]
+        newp &lt;- currentp + rnorm(1, 0, pproposalsd)
+        A &lt;- (prior(newp) * likelihood(newp, nAA, nAa, naa))/(prior(currentp) * 
+            likelihood(currentp, nAA, nAa, naa))
+        if (runif(1) &lt; A) {
+            p[i] &lt;- newp
+        } else {
+            p[i] &lt;- currentp
+        }
+    }
+    return(p)
+}</code></pre>
+<p>Now we can investigate different starting allele frequencies and proposal standard deviations to study algorithm convergence.</p>
+<p>Differing starting allele frequency:</p>
+<pre class="r"><code>z1 &lt;- psamplerMCMC(50, 21, 29, 10000, 0.05, 0.01)
+z2 &lt;- psamplerMCMC(50, 21, 29, 10000, 0.5, 0.01)
+
+par(mfcol = c(2, 1))
+maxz = max(c(z1, z2))
+
+hist(z1[5001:10000], prob = T)
+hist(z2[5001:10000], prob = T)</code></pre>
+<p><img src="figure/hw4.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Differing starting population sizes:</p>
+<pre class="r"><code>z1 &lt;- psamplerMCMC(21, 29, 50, 10000, 0.5, 0.01)
+z2 &lt;- psamplerMCMC(60, 25, 15, 10000, 0.5, 0.01)
+
+par(mfcol = c(2, 1))
+maxz = max(c(z1, z2))
+
+hist(z1[5001:10000], prob = T)
+hist(z2[5001:10000], prob = T)</code></pre>
+<p><img src="figure/hw4.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Differing standard deviations:</p>
+<pre class="r"><code>z1 &lt;- psamplerMCMC(21, 29, 50, 10000, 0.5, 5)
+z2 &lt;- psamplerMCMC(21, 29, 50, 10000, 0.5, 0.01)
+
+par(mfcol = c(2, 1))
+maxz = max(c(z1, z2))
+
+hist(z1, prob = T)
+hist(z2, prob = T)</code></pre>
+<p><img src="figure/hw4.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The biggest difference we can see is when we change the standard deviation. The algorithm takes longer to converge in this example, similar to in example 1, when the standard deviation is too large as most proposed “moves” are likely rejected.</p>
+</div>
+<div id="example-3" class="section level3">
+<h3>Example 3</h3>
+<p>Now we want to estimate the allele frequency and inbreeding coefficient by assuming a more complex model.</p>
+<pre class="r"><code># define new, independent, uniform priors
+fprior &lt;- function(f) {
+    if ((f &lt; 0) || (f &gt; 1)) {
+        return(0)
+    } else {
+        return(1)
+    }
+}
+pprior &lt;- function(p) {
+    if ((p &lt; 0) || (p &gt; 1)) {
+        return(0)
+    } else {
+        return(1)
+    }
+}
+# define new likelihood function for our new model
+likelihood &lt;- function(p, f, nAA, nAa, naa) {
+    fAA &lt;- ((f * p) + (1 - f) * (p^2))^(2 * nAA)
+    fAa &lt;- ((1 - f) * 2 * p * (1 - p) * f * p + (1 - f) * (p^2))^nAa
+    faa &lt;- ((1 - f) * 2 * p * (1 - p) * f * (1 - p) + (1 - f) * ((1 - p)^2))^(2 * 
+        naa)
+    return(fAA * fAa * faa)
+}
+# new MCMC simulation function
+fpsamplerMCMC &lt;- function(nAA, nAa, naa, niter, fstartval, pstartval, fproposalsd, 
+    pproposalsd) {
+    f &lt;- rep(0, niter)
+    p &lt;- rep(0, niter)
+    f[1] &lt;- fstartval
+    p[1] &lt;- pstartval
+    
+    for (i in 2:niter) {
+        
+        currentf &lt;- f[i - 1]
+        currentp &lt;- p[i - 1]
+        newf &lt;- currentf + rnorm(1, 0, fproposalsd)
+        newp &lt;- currentp + rnorm(1, 0, pproposalsd)
+        
+        A &lt;- (pprior(newp) * likelihood(newp, newf, nAA, nAa, naa))/(pprior(currentp) * 
+            likelihood(currentp, currentf, nAA, nAa, naa))
+        B &lt;- (fprior(newf) * likelihood(newp, newf, nAA, nAa, naa))/(fprior(currentf) * 
+            likelihood(currentp, currentf, nAA, nAa, naa))
+        
+        if (runif(1) &lt; A) {
+            p[i] &lt;- newp
+        } else {
+            p[i] &lt;- currentp
+        }
+        if (runif(1) &lt; B) {
+            f[i] &lt;- newf
+        } else {
+            f[i] &lt;- currentf
+        }
+    }
+    return(list(f = f, p = p))
+}</code></pre>
+<p>Then lets run the simulation and view the posterir distributions:</p>
+<pre class="r"><code>res &lt;- fpsamplerMCMC(50, 21, 29, 10000, 0.5, 0.5, 1, 0.1)
+
+hist(res$f[1001:10000])</code></pre>
+<p><img src="figure/hw4.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>hist(res$p[1001:10000])</code></pre>
+<p><img src="figure/hw4.Rmd/unnamed-chunk-10-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>We can find point estimates by taking the mean of these distributions after removing “burnin”:</p>
+<pre class="r"><code>mean(res$f[1001:10000])</code></pre>
+<pre><code>[1] 0.2895208</code></pre>
+<pre class="r"><code>mean(res$p[1001:10000])</code></pre>
+<pre><code>[1] 0.6577128</code></pre>
+<p>90% CIs for the mean parameters are:</p>
+<pre class="r"><code>quantile(res$f[1001:10000], c(0.05, 0.95))</code></pre>
+<pre><code>       5%       95% 
+0.1617188 0.4118990 </code></pre>
+<pre class="r"><code>quantile(res$p[1001:10000], c(0.05, 0.95))</code></pre>
+<pre><code>       5%       95% 
+0.5947752 0.7881999 </code></pre>
+</div>
+<div id="addendum-gibbs-sampling" class="section level3">
+<h3>Addendum: Gibbs sampling</h3>
+<p>We can solve the same problem using a Gibbs sampler.</p>
+<pre class="r"><code># returns 1 with probability f, and 0 with probability 1-f
+rbernoulli &lt;- function(f) {
+    return(as.numeric(1 * runif(1) &lt; f))
+}
+
+#&#39; @param f inbreeding coefficient
+sim_z &lt;- function(f) {
+    # 100 is the size of the data set
+    return(rbinom(100, 1, f))
+}
+
+#&#39; @param g genotypes
+#&#39; @param z inbred or not
+update_p &lt;- function(g, z) {
+    inbred &lt;- g[z == 1]
+    outbred &lt;- g[z == 0]
+    if (length(inbred) &gt; 0) {
+        # count number of A and a alleles that are inbred
+        A_count1 &lt;- sapply(inbred, function(x) {
+            ifelse(x == 0, 1, 0)
+        })
+        a_count1 &lt;- sapply(inbred, function(x) {
+            ifelse(x == 2, 1, 0)
+        })
+    } else {
+        A_count1 &lt;- 0
+        a_count1 &lt;- 0
+    }
+    # count number of A and a alleles that are outbred
+    A_count0 &lt;- sapply(outbred, function(x) {
+        if (x == 0) {
+            2
+        } else if (x == 1) {
+            1
+        } else {
+            0
+        }
+    })
+    a_count0 &lt;- sapply(outbred, function(x) {
+        if (x == 1) {
+            1
+        } else if (x == 2) {
+            2
+        } else {
+            0
+        }
+    })
+    # print(A_count1) print(A_count0)
+    A_count &lt;- sum(A_count1, A_count0)
+    a_count &lt;- sum(a_count1, a_count0)
+    # print(allele_count)
+    return(rbeta(1, 1 + A_count, 1 + a_count))
+}
+
+#&#39; @param z inbred or not
+update_f &lt;- function(z) {
+    # separate genotypes print(sum(z==0))
+    return(rbeta(1, sum(z == 1), 1 + sum(z == 0)))
+}
+
+#&#39; @param niter the number of iterations
+#&#39; @param seed random number generator consistency
+gibbs &lt;- function(niter = 1000, seed) {
+    
+    # set seed
+    set.seed(seed)
+    
+    # resulting data
+    res &lt;- list(p = numeric(niter), f = numeric(niter))
+    
+    # AA -&gt; 50, Aa -&gt; 21, aa -&gt; 29
+    g &lt;- sample(c(rep(0, 50), rep(1, 21), rep(2, 29)))
+    
+    # initialize
+    p &lt;- runif(1)
+    f &lt;- runif(1)
+    z &lt;- sim_z(f)
+    res$p[1] &lt;- p
+    res$f[1] &lt;- f
+    
+    # run algorithm
+    for (i in 2:niter) {
+        p &lt;- update_p(g, z)
+        f &lt;- update_f(z)
+        z &lt;- sim_z(f)
+        res$p[i] &lt;- p
+        res$f[i] &lt;- f
+    }
+    return(res)
+}</code></pre>
+<p>Let’s see if we get the same result:</p>
+<pre class="r"><code>res &lt;- gibbs(1000, 40)
+
+mean(res$f[1001:10000])</code></pre>
+<pre><code>[1] NA</code></pre>
+<pre class="r"><code>mean(res$p[1001:10000])</code></pre>
+<pre><code>[1] NA</code></pre>
+<pre class="r"><code>hist(res$p)</code></pre>
+<p><img src="figure/hw4.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>hist(res$f)</code></pre>
+<p><img src="figure/hw4.Rmd/unnamed-chunk-14-2.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="session-information" class="section level2">
+<h2>Session Information</h2>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.3.2 (2016-10-31)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: Gentoo/Linux
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+loaded via a namespace (and not attached):
+ [1] backports_1.0.5 magrittr_1.5    rprojroot_1.2   formatR_1.4    
+ [5] tools_3.3.2     htmltools_0.3.5 yaml_2.1.14     Rcpp_0.12.9    
+ [9] stringi_1.1.2   rmarkdown_1.3   knitr_1.15.1    git2r_0.18.0   
+[13] stringr_1.2.0   digest_0.6.12   workflowr_0.3.0 evaluate_0.10  </code></pre>
+</div>
+
+<hr>
+<p>
+    This site was created with <a href="http://rmarkdown.rstudio.com">R Markdown</a>
+</p>
+<hr>
+
+<!-- To enable disqus, uncomment the section below and provide your disqus_shortname -->
+
+<!-- disqus
+  <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'rmarkdown'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+-->
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

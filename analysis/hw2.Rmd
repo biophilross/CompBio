@@ -28,8 +28,17 @@ We can represent our data as a vector of frequencies for having rolled the numbe
 x <- c(1,2,6,1,0,0) # data
 fB <- c(1/6,1/6,1/2,1/6,0,0) # blue dice model
 fG <- c(1/6,1/3,1/6,1/3,0,0) # green dice model
-L <- function(f,x) { prod(f^x*(1-f)^(1-x)) } # likelihood function
-LR <- L(fB,x)/L(fG,x) # likelihood ratio
+
+#' Likelihood function
+#'
+#' @param f vector of probabilities of success
+#' @param x vector of successes and failures
+#'
+calculate_likelihood <- function(f,x) { 
+  prod(f^x*(1-f)^(1-x)) 
+}
+
+LR <- calculate_likelihood(fB,x)/calculate_likelihood(fG,x) # likelihood ratio
 print(LR)
 ```
 
@@ -58,8 +67,8 @@ Below is the code for running simulations:
 #'
 simulate_tusks <- function(nS,nF,fS,fF) {
   
-  sS <- replicate(nS, sapply(fS, function(x) {sample(c(1,0),1,prob=c(x,1-x))}))
-  sF <- replicate(nF, sapply(fF, function(x) {sample(c(1,0),1,prob=c(x,1-x))})) 
+  sS <- replicate(nS, sapply(fS, function(x) {sample(c(1,0),1,prob=c(x,1-x),replace=TRUE)}))
+  sF <- replicate(nF, sapply(fF, function(x) {sample(c(1,0),1,prob=c(x,1-x),replace=TRUE)})) 
   
   return(list(S=sS,F=sF))
   
@@ -100,7 +109,7 @@ compute_misclassification_rate <- function(lr, lc) {
 #'
 #' @return Miscalculation rates based on cutoffs
 #'
-#' @example run_simulation(1000, 1000, c(0.40, 0.12,0.21,0.12,0.02,0.32), c(0.8,0.2,0.11,0.17,0.23,0.25), seq(-2,2,length=100))
+#' @example run_simulation(1000, 1000, c(0.40,0.12,0.21,0.12,0.02,0.32), c(0.8,0.2,0.11,0.17,0.23,0.25), seq(-2,2,length=100))
 #'
 #'
 run_simulation <- function(nS,nF,fS,fF,lc) {
@@ -109,8 +118,12 @@ run_simulation <- function(nS,nF,fS,fF,lc) {
   data <- simulate_tusks(nS,nF,fS,fF)
   
   # compute likelihood ratios
-  LRS <- apply(data$S, 2, function(x) {L(fS,x)})/apply(data$S, 2, function(x) {L(fF,x)})
-  LRF <- apply(data$F, 2, function(x) {L(fS,x)})/apply(data$F, 2, function(x) {L(fF,x)})
+  LRS <- apply(data$S, 2, function(x) {
+    calculate_likelihood(fS,x)})/apply(data$S, 2, function(x) {calculate_likelihood(fF,x)
+      })
+  LRF <- apply(data$F, 2, function(x) {
+    calculate_likelihood(fS,x)})/apply(data$F, 2, function(x) {calculate_likelihood(fF,x)
+      })
   
   # compute misclassification rate
   rates <- compute_misclassification_rate(lr=list(S=LRS,F=LRF), lc)
@@ -122,11 +135,14 @@ run_simulation <- function(nS,nF,fS,fF,lc) {
 When we run the simulation for 1000 Savanna elephant tusks and 1000 Forest elephant tusks:
 
 ```{r}
+seed <- 37
 nS <- 1000
 nF <- 1000
 fS <- c(0.40, 0.12,0.21,0.12,0.02,0.32)
 fF <- c(0.8,0.2,0.11,0.17,0.23,0.25)
 lc <- seq(-2,2,length=100)
+
+set.seed(seed)
 
 results <- run_simulation(nS,nF,fS,fF,lc)
 plot(seq(-2,2,length=100), results, type="l", main = "Misclassification Rate", xlab = "Log10(c)", ylab = "Rate")
@@ -145,6 +161,8 @@ fS <- c(0.40, 0.12,0.21,0.12,0.02,0.32)
 fF <- c(0.8,0.2,0.11,0.17,0.23,0.25)
 lc <- seq(-2,2,length=100)
 
+set.seed(seed)
+
 results <- run_simulation(nS,nF,fS,fF,lc)
 plot(seq(-2,2,length=100), results, type="l", main = "Misclassification Rate", xlab = "Log10(c)", ylab = "Rate")
 ```
@@ -160,9 +178,7 @@ x <- c(1,0,1,0,0,1)
 x <- sapply(x, function(x){ifelse(rbinom(1,1,0.98)==1,x,1-x)})
 fS <- c(0.40,0.12,0.21,0.12,0.02,0.32)
 fF <- c(0.8,0.2,0.11,0.17,0.23,0.25)
-L <- function(f,x){ prod(f^x*(1-f)^(1-x)) }
-LR <- L(fS,x)/L(fF,x)
-print(L)
+LR <- calculate_likelihood(fS,x)/calculate_likelihood(fF,x)
 print(LR)
 ```
 
@@ -173,11 +189,11 @@ print(LR)
 Suppose that we receive a data set of adult, human heights. We don't know what kinds of humans, exactly, but we know that they are adults. The first thing we might want to do is explore and describe our data. Now suppose our data looks like this:
 
 ```{r, echo=F}
-NUM.SAMPLES <- 5000
-heights     <- numeric(NUM.SAMPLES)
-for(i in seq_len(NUM.SAMPLES)) {
-  z.i <- rbinom(1,1,0.5)
-  if(z.i == 0) heights[i] <- rnorm(1, mean = 72, sd = 2)
+num_samples <- 5000
+heights     <- numeric(num_samples)
+for(i in seq_len(num_samples)) {
+  zi <- rbinom(1,1,0.5)
+  if(zi == 0) heights[i] <- rnorm(1, mean = 72, sd = 2)
   else heights[i] <- rnorm(1, mean = 52, sd = 2)
 }
 hist(heights)
@@ -188,7 +204,7 @@ Based on what we know about the distribution of adult, human heights we might ha
 ```{r, echo=F}
 m <- mean(heights)
 hist(heights)
-abline(v = m, col="red")
+abline(v=m,col="red")
 ```
 
 Does this make sense?
@@ -230,21 +246,18 @@ An R function to simulate genetic data for tusks:
 #'
 #'
 sim_mixture_tusks <- function(N, w, F) {
-  
+  # intialize memberships vector
   memberships <- numeric(N)
+  # initialize output data matrix
   data <- matrix(0, nrow = N, ncol = nrow(F))
-  
+  # for the number of samples...
   for (i in 1:N) {
-    
     # which category are we randomly choosing based on our mixture proportions 
     z <- which.max(rmultinom(n = 1, size = 1, prob = w))
     memberships[i] <- z
-    
-    # generate identified for individual markers
+    # generate identifier for individual markers
     data[i,] <- sapply(F[,z], function(x) {sample(c(1,0),1,prob=c(x,1-x))})
-    
   }
-  
   return(list(X=data,Z=memberships))
 }
 ```
@@ -264,25 +277,15 @@ An R function to compute the log-likelihood for the simulated data set:
 #'
 #' @example calculate_log_likelihood(X,c(0.4,0.6),matrix(c(0.40,0.12,0.21,0.12,0.02,0.32,0.8,0.2,0.11,0.17,0.23,0.25),ncol=2))
 #'
-#'
 calculate_log_likelihood <- function(X, w, F) {
-  
+  # s is the log-likelihood for each row
   s <- apply(X, 1, function(x) {
-    
+    #
     v <- numeric(length(w))
-    
-    for (k in length(w)) {
-      
-      v[k] <- L(F[,k], x) * w[k]
-      
-    }
-    
+    for (k in 1:length(w)) { v[k] <- calculate_likelihood(F[,k],x) * w[k] }
     sum(v)
-    
   })
-  
   return(sum(log(s)))
-  
 }
 ```
 
@@ -295,6 +298,8 @@ N <- 1000
 w <- c(0.25,0.75)
 F <- matrix(c(0.40,0.12,0.21,0.12,0.02,0.32,0.8,0.2,0.11,0.17,0.23,0.25),ncol=2)
 
+set.seed(seed)
+
 data <- sim_mixture_tusks(N,w,F)
 calculate_log_likelihood(data$X,w,F)
 ```
@@ -302,69 +307,132 @@ calculate_log_likelihood(data$X,w,F)
 Now we can sweep through different values of our mixture proportions to see where we see the highest likelihood:
 
 ```{r}
-
-steps <- 10
-
+# number of values to test
+steps <- 100
+# vector of mixture proportions
 wl <- seq(0.01,1,length=steps)
-
+# log-likelihoods for each mixture proportion
 lls <- sapply(wl, function(x) {
-  
   w <- c(x,1-x)
-  data <- sim_mixture_tusks(N,w,F)
   calculate_log_likelihood(data$X,w,F)
-  
 })
-
-plot(wl, lls, type="l")
+# plot the results along with the maximum likelihood
+plot(wl, lls, type="l",xlim=c(0,1),ylab="Log-Likelihood",xlab="Mixture Proportion",main="Most Likely Mixture Proportion")
+abline(v=wl[which.max(lls)],col="red")
 ```
 
 ### EM Algorithm
 
-First we need to write a function that calculates and returns the log likelihoods:
+Instead of sweeping through every possible value of $w$, we can use an EM algorithm to estimate the most likely mixture proportions.
 
+To do this, we first need to rewrite our function to calculate log-likelihoods:
 
 ```{r}
-mixture.EM <- function(w.init, L, X) {
-  
-  w.curr <- w.init
-  
-  # store log-likehoods for each iteration
-  log_liks <- c()
-  ll       <- calculate_log_likelihood(X, w.curr, L)
-  log_liks <- c(log_liks, ll)
-  delta.ll <- 1
-  
-  while(delta.ll > 1e-5) {
-    w.curr   <- EM.iter(w.curr, L)
-    ll       <- compute.log.lik(X, L, w.curr)
-    log_liks <- c(log_liks, ll)
-    delta.ll <- log_liks[length(log_liks)]  - log_liks[length(log_liks)-1]
-  }
-  return(list(w.curr, log_liks))
+#' Calculate the log-likelihood of a data matrix
+#'
+#' @param X N by M matrix of N samples by M genetic markers
+#' @param w vector of mixture proportions of length K that sums to 1
+#' @param L N by K matri of likelihoods
+#'
+#' @return log-likelihood under the model for our data set
+#'
+#' @example calculate_log_likelihood2(X,c(0.4,0.6),matrix(c(0.40,0.12,0.21,0.12,0.02,0.32,0.8,0.2,0.11,0.17,0.23,0.25),ncol=2))
+#'
+calculate_log_likelihood2 <- function(X, w, L) {
+  # calculate the likelihoods weighted according to 
+  # our current best mixture proportion
+  L[,1] <- L[,1]*w[1]
+  L[,2] <- L[,2]*w[2]
+  return(sum(log(rowSums(L))))
 }
+```
 
-EM.iter <- function(w.curr, L, ...) {
-  
+Now we write the actual EM algorithm functions
+
+```{r}
+#' Function to run the E and M step of the EM algorithm
+#' 
+#' @param w_curr K length vector of mixture proportions
+#' @param L N by K matrix of likelihoods
+#' 
+#' @return new k length vector of mixture proportions
+#' 
+EM_iter <- function(w_curr, L, ...) {
   # E-step: compute E_{Z|X,w0}[I(Z_i = k)]
   z_ik <- L
   for(i in seq_len(ncol(L))) {
-    z_ik[,i] <- w.curr[i]*z_ik[,i]
+    z_ik[,i] <- w_curr[i]*z_ik[,i]
   }
-  z_ik     <- z_ik / rowSums(z_ik)
-  
+  z_ik <- z_ik / rowSums(z_ik)
   # M-step
-  w.next   <- colSums(z_ik)/sum(z_ik)
-  return(w.next)
+  w_next <- colSums(z_ik)/sum(z_ik)
+  return(w_next)
+}
+
+#' EM algorithm to estimate mixture proportions from a model whose components are fully known
+#' 
+#' @param w_init initial mixture proportions to start with
+#' @param L N by K matrix of log-likelihoods of N observations by K log-likelihoods
+#' @param X N by M matrix of N observations by M genetic markers
+#' 
+#' @return list of mixture proportions and log-likelihood at each step
+#'
+mixture_EM <- function(w_init, L, X) {
+  # mixture proportion to start with
+  w_curr <- w_init
+  # store log-likehoods for each iteration
+  log_liks <- c()
+  ll       <- calculate_log_likelihood2(X, w_curr, L)
+  log_liks <- c(log_liks, ll)
+  delta_ll <- 1
+  # run through algorithm until the difference in log-likelihood is minimal
+  while(delta_ll > 1e-5) {
+    w_curr   <- EM_iter(w_curr, L)
+    ll       <- calculate_log_likelihood2(X, w_curr, L)
+    log_liks <- c(log_liks, ll)
+    delta_ll <- log_liks[length(log_liks)]  - log_liks[length(log_liks)-1]
+  }
+  return(list(w_curr, log_liks))
 }
 ```
 
+Finally, we can test to make sure the algorithm works at all:
 
-```{r, eval=F}
-#perform EM
-ee <- mixture.EM(w.init=c(0.5,0.5), L, X)
+```{r}
+L <- matrix(0, nrow=length(data$X), ncol= 2)
+L[,1] <- apply(data$X,1,function(x) calculate_likelihood(F[,1],x))
+L[,2] <- apply(data$X,1,function(x) calculate_likelihood(F[,2],x))
+```
+
+```{r}
+ee <- mixture_EM(w_init=c(0.1,0.9), L, data$X)
 print(paste("Estimate = (", round(ee[[1]][1],2), ",", round(ee[[1]][2],2), ")", sep=""))
 ```
 
+But is the log-likelihood actually increasing at each step?
+
+```{r}
+plot(ee[[2]],ylab=expression(l(theta)),xlab='Iteration',main="Log-likelihood")
+```
+
+We need to run the EM algorithm several times starting from random mixture proportions to get a good estimate of the actual maximum likelihood value:
+
+```{r}
+# how many times to rerun the em algorithm
+num_iter <- 100
+# values to sample from
+sample_space <- seq(0.01,1,length.out=100)
+estimates <- numeric(num_iter)
+# r
+for (i in 1:num_iter) {
+  m <- sample(sample_space,size=1)
+  w <- c(m,1-m)
+  estimates[i] <- mixture_EM(w_init=w, L, data$X)[[1]]
+}
+
+print(mean(estimates))
+hist(estimates,breaks=10,xlim=c(0,1))
+```
 
 ## Session Information
 

@@ -7,7 +7,9 @@ knitr::opts_chunk$set(
   fig.align = "center",
   tidy = TRUE,
   fig.path = paste0("figure/", knitr::current_input(), "/"),
-  cache = FALSE
+  cache = FALSE,
+  warning = FALSE,
+  message = FALSE
 )
 
 # ---- session-info ----

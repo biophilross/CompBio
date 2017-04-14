@@ -1,0 +1,226 @@
+---
+title: "Grade of membership models to study cell-type evolution"
+author: "Philipp Ross"
+date: 2017-03-10
+output: html_document
+---
+
+```{r read-chunk, include=FALSE, cache=FALSE}
+knitr::read_chunk("chunks.R")
+```
+
+```{r knitr-opts-chunk, include=FALSE}
+```
+
+**Last updated:** `r Sys.Date()`
+
+**Code version:** `r workflowr::extract_commit(".", 1)$sha1`
+
+## Abstract
+
+The molecular mechanisms of cell-type evolution remain unclear. The sister cell-type hypothesis assumes that cell-types, much like individual genes, evolve by 'furcation' and that the historical events from ancestral to modern cell types can be represented as a tree-like network. **REFERENCE** However, recent studies have found pervasive concerted evolution in cell-type transcriptomes, which violates the assumption of individuation in generating tree-like representations of cell-type historical contingency. In other words, cell-types likely evolve by combinations of 'furcation' and fusion in the form of co-opted gene expression programs from other cell-types within the same organism. Here I look to use a combination of maximum likelihood phylogenetic tree construction along with grade of membership models to infer the evolutionary relationship between brown, beige, and white adipocytes.
+
+## Methods
+
+### Data pre-processing
+
+RNA-seq data was downloaded from the SRA for adipose tissue samples from Chicken, Opossum, Wallaby, Mouse, and Human species. **REFERENCES** Reads were psuedoaligned and expression quantified using kallisto. **REFERENCE** Counts were normalized and quality controlled using DESeq2's regularized-log normalization. **REFERENCE** Binary expression matrices were generated using TPMs estimated by kallisto. **REFERENCE** A TPM greater than or equal to 2 was designated as expressed (1) whereas a TPM less than 2 was designated as not expressed (0).
+
+### RAxML
+
+Maximum-likelihood trees were generated using RAxML **REFERENCE** and the following command:
+
+```
+raxmlHPC -f a -m BINGAMMA -p 12345 -x 12345 -# 1000 -s expression.phylip -n T1
+```
+General formula for calculating the maximum likelihood of our data give the parameters
+
+Algorithm RAxML uses to search tree space
+
+Rate matrix used by RAxML for binary character state evolution
+
+### CountClust
+
+A grade of membership model was used to quantify the cluster proportions for each sample using different values of $k$.
+
+CountClust **REFERENCE** assumes that the RNA-seq counts, $c_{ng}$, for each sample $n$ and each gene $g$ can be modeled as a random draw from a multinomial distribution:
+
+$(c_{n1}, c_{n2}, · · · , c_{nG})$ ∼ $Multinomial (c_{n+}, p_{n1}, p_{n2}, · · · , p_{nG})$
+
+Where
+
+$p_{ng} := \sum_{k=1}^{K} q_{nk} \theta_{kg}$
+
+and $\theta_{gk}$ represents the relative expression of gene $g$ in cluster $k$ and $q_{nk}$ the proportion of reads from sample $n$ coming from cluster $k$.
+
+How does it fit the data?
+
+The following code was used to generate the results:
+
+```{r,}
+library(CountClust)
+
+counts <- readRDS("../data/final_project/counts_matrix.rds")
+sampleTable <- readRDS("../data/final_project/sample_table.rds")
+orthos <- readRDS("../data/final_project/orthologs.rds")
+
+geneIDs <- rownames(counts)
+geneNames <- orthos[orthos$hid %in% geneIDs,]$hname
+
+for (i in 2:10) {
+  FitGoM(
+  t(counts),
+  K = i,
+  tol = 0.1,
+  path_rda = paste0("../output/final_project/countclust/clustk",i,".rda")
+  )
+  load(paste0("../output/final_project/countclust/clustk",i,".rda"))
+  assign(paste0("omega", i, sep = ""), eval(parse(
+  text = paste0("Topic_clus_list$clust_", i, "$omega")
+  )))
+  assign(paste0("theta", i, sep = ""), eval(parse(
+  text = paste0("Topic_clus_list$clust_", i, "$theta")
+  )))
+}
+
+annotation <- data.frame(
+  sample_id = paste0("X", c(1:NROW(omega2))),
+  tissue_label = factor(sampleTable$label,levels=rev(c(sampleTable$label))))
+```
+
+## Results
+
+### Data
+
+Our data as input for RAxML is a phylip formatted "alignment" file:
+
+```
+33 4530
+ERR522169  011101111110111111...
+ERR522170  011001111110011111...
+ERR522172  011001111111011111...
+ERR522173  011101111111011111...
+.
+.
+.
+```
+
+Our data as input for CountClust is a gene by sample count matrix:
+
+```{r,echo=F}
+knitr::kable(head(counts[,1:4]))
+```
+
+### RAxML
+
+```{r,echo=F}
+library(ggtree)
+
+tree <- read.raxml("../output/final_project/raxml/RAxML_bipartitionsBranchLabels.T3")
+
+dd <- data.frame(sample = c("ERR522170","ERR522175","ERR522181","ERR522169",
+                             "ERR522178","ERR522180","DRR013624","DRR013625",
+                             "DRR013626","DRR013627","DRR013628","DRR013629",
+                             "DRR013630","DRR013631","SRR908032","SRR924485",
+                             "SRR924539","ERR522174","ERR522182","ERR525590",
+                             "ERR525594","ERR522177","ERR522183","ERR525591",
+                             "ERR525593","ERR522172","ERR522173","ERR522176",
+                             "ERR522184","ERR522185","ERR522186","ERR525589",
+                             "ERR525592"),
+                 type = c(rep("prewhite",3),rep("prebrown",3),rep("white",15),
+                          rep("beige",4),rep("brown",8)),
+                 species = c(rep("human",6),rep("wallaby",8),"opossum",
+                             rep("chicken",2),"human","human","mouse","mouse",
+                             "human","human","mouse","mouse","human","human",
+                             "human","human","human","human","mouse","mouse"))
+
+tree <- ggtree(tree,layout="rectangular") 
+```
+
+```{r,echo=F,fig.height=12}
+tree %<+% dd + geom_tiplab(aes(color=type)) + geom_label(aes(label=bootstrap, fill=bootstrap)) +
+  scale_fill_continuous(low='red', high='green') + theme_tree2(legend.position='right') + theme_tree2() +
+  ggtitle("Cell Types")
+```
+
+```{r,echo=F,fig.height=12}
+tree %<+% dd + geom_tiplab(aes(color=species)) + geom_label(aes(label=bootstrap, fill=bootstrap)) +
+  scale_fill_continuous(low='red', high='green') + theme_tree2(legend.position='right') + theme_tree2() +
+  ggtitle("Species")
+```
+
+### CountClust
+
+```{r,k3,echo=F}
+StructureGGplot(omega = omega3, annotation = annotation,
+                palette = RColorBrewer::brewer.pal(10, "Paired"),
+                yaxis_label = "Sample",
+                order_sample = TRUE,
+                axis_tick = list(axis_ticks_length = .1,
+                                 axis_ticks_lwd_y = .1,
+                                 axis_ticks_lwd_x = .1,
+                                 axis_label_size = 7,
+                                 axis_label_face = "bold"))
+```
+
+```{r,t3,echo=F}
+top_features <- ExtractTopFeatures(theta3,top_features=100,method="poisson",options="min")
+gene_id_list <- do.call(rbind,lapply(1:dim(top_features)[1],function(x) geneIDs[top_features[x,]]))
+gene_name_list <- do.call(rbind,lapply(1:dim(top_features)[1],function(x) geneNames[top_features[x,]]))
+knitr::kable(tibble::as_tibble(gene_name_list[,1:12]),row.names=T)
+#knitr::kable(tibble::as_tibble(gene_id_list[,1:12]),row.names=T)
+```
+
+```{r,k6,echo=F}
+StructureGGplot(omega = omega6, annotation = annotation,
+                palette = RColorBrewer::brewer.pal(10, "Paired"),
+                yaxis_label = "Sample",
+                order_sample = TRUE,
+                axis_tick = list(axis_ticks_length = .1,
+                                 axis_ticks_lwd_y = .1,
+                                 axis_ticks_lwd_x = .1,
+                                 axis_label_size = 7,
+                                 axis_label_face = "bold"))
+```
+
+```{r,t6,echo=F}
+top_features <- ExtractTopFeatures(theta6,top_features=100,method="poisson",options="min")
+gene_id_list <- do.call(rbind,lapply(1:dim(top_features)[1],function(x) geneIDs[top_features[x,]]))
+gene_name_list <- do.call(rbind,lapply(1:dim(top_features)[1],function(x) geneNames[top_features[x,]]))
+knitr::kable(tibble::as_tibble(gene_name_list[,1:12]),row.names=T)
+#knitr::kable(tibble::as_tibble(gene_id_list[,1:12]),row.names=T)
+```
+
+```{r,k10,echo=F}
+StructureGGplot(omega = omega10, annotation = annotation,
+                palette = RColorBrewer::brewer.pal(10, "Paired"),
+                yaxis_label = "Sample",
+                order_sample = TRUE,
+                axis_tick = list(axis_ticks_length = .1,
+                                 axis_ticks_lwd_y = .1,
+                                 axis_ticks_lwd_x = .1,
+                                 axis_label_size = 7,
+                                 axis_label_face = "bold"))
+```
+
+```{r,t10,echo=F}
+top_features <- ExtractTopFeatures(theta10,top_features=100,method="poisson",options="min")
+gene_id_list <- do.call(rbind,lapply(1:dim(top_features)[1],function(x) geneIDs[top_features[x,]]))
+gene_name_list <- do.call(rbind,lapply(1:dim(top_features)[1],function(x) geneNames[top_features[x,]]))
+knitr::kable(tibble::as_tibble(gene_name_list[,1:12]),row.names=T)
+#knitr::kable(tibble::as_tibble(gene_id_list[,1:12]),row.names=T)
+```
+
+## Conclusions
+
+How can we combine evolutionary inference with grade of membership models to make evolutionary statements about the different clusters found by CountClust?
+
+
+## References
+
+
+
+## Session Information
+
+```{r session-info,echo=F}
+```

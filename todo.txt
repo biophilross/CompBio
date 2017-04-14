@@ -1,0 +1,31 @@
+Where did I leave off?
+
+
+I left off on homework 5:
+
+I still have not completed the model without admixture.
+
+I need to calculate the posterior probabilities (perform inference on k) for each iteration of the gibbs sampler.
+
+That can be used again in the model with admixture also.
+
+The update functions for the algorithm should be working properly.
+
+
+As for the model with admixture:
+
+The update functions for p and q should be fine, but the update function for z needs work. Ideally, I can also find a way to make it more efficient. Otherwise, it will take an incredibly long time to run (I think).
+
+I also need to program the MH algorithm step to update alpha.
+
+
+
+Things still todo for this class:
+
+* Get as far as I can on homework 5
+  * How to calculate posterior probabilities?
+  * How to sample Q?
+  * How to update alpha?
+* Start homework 6
+* Get as far as I can on homework 6
+* Homework 7

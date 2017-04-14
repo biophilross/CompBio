@@ -309,22 +309,23 @@ div.tocify {
 </div>
 
 
-<p><strong>Last updated:</strong> 2017-01-12</p>
-<p><strong>Code version:</strong> f1d1eaf</p>
+<p><strong>Last updated:</strong> 2017-04-12</p>
+<p><strong>Code version:</strong> e75cac0</p>
 <div id="problem-1" class="section level2">
 <h2>Problem 1</h2>
 <p>We want to find the probability that employee is lying, given that the lie detector detected. The calculation is outlined in the code block below and answer is printed underneath.</p>
-<pre class="r"><code>PDetectedLying       &lt;- 0.95
-PDetectedNotLying    &lt;- 0.01
-PNotDetectedLying    &lt;- 0.99
+<pre class="r"><code>PDetectedLying &lt;- 0.95
+PDetectedNotLying &lt;- 0.01
+PNotDetectedLying &lt;- 0.99
 PNotDetectedNotLying &lt;- 0.05
 
-PLying    &lt;- 0.001
+PLying &lt;- 0.001
 PNotLying &lt;- 0.999
 
 # Therefore...
 
-PLyingDetected &lt;- (PDetectedLying * PLying) / ((PDetectedLying * PLying) + (PDetectedNotLying*PNotLying))
+PLyingDetected &lt;- (PDetectedLying * PLying)/((PDetectedLying * PLying) + (PDetectedNotLying * 
+    PNotLying))
 print(PLyingDetected)</code></pre>
 <pre><code>[1] 0.08683729</code></pre>
 </div>
@@ -352,10 +353,10 @@ P(Y \leq y) &amp;= P(-log(U) \leq y) \\
 \]</span></p>
 <p>Which we can see is the CDF of the exponential distribution with mean 1.</p>
 <p><strong>(c)</strong></p>
-<pre class="r"><code>mean(-log(runif(n=1000)))</code></pre>
-<pre><code>[1] 1.011809</code></pre>
-<pre class="r"><code>plot(ecdf(-log(runif(n=1000))))
-plot(ecdf(rexp(n=1000)), add=T, col=&quot;red&quot;)</code></pre>
+<pre class="r"><code>mean(-log(runif(n = 1000)))</code></pre>
+<pre><code>[1] 1.019707</code></pre>
+<pre class="r"><code>plot(ecdf(-log(runif(n = 1000))))
+plot(ecdf(rexp(n = 1000)), add = T, col = &quot;red&quot;)</code></pre>
 <p><img src="figure/hw1.Rmd/problem-2-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="problem-3" class="section level2">
@@ -452,33 +453,33 @@ E[X_{2}] = E[E[X_{2}|X_{1},N_{1}]] = E[X_{1}] = np
 </center>
 <p><strong>(d)</strong></p>
 <pre class="r"><code>simulation &lt;- function(n, p, r, s) {
-  
-  # generate matrices
-  X &lt;- matrix(data=0,nrow=r,ncol=s)
-  N &lt;- matrix(data=0,nrow=r,ncol=s)
-  
-  # generate initial values
-  X[,1] &lt;- rbinom(r, n, p)
-  N[,1] &lt;- rpois(r, n)
-  
-  # loop through number of nodes
-  for (i in 2:s) {
-    probs &lt;- X[,i - 1] / N[,i - 1]
-    N[,i] &lt;- rpois(r, X[,i - 1])
-    X[,i] &lt;- rbinom(r, N[, i - 1], replace(probs, probs &gt; 1, 1))
-  }
-  
-  return(list(X=X,N=N))
+    
+    # generate matrices
+    X &lt;- matrix(data = 0, nrow = r, ncol = s)
+    N &lt;- matrix(data = 0, nrow = r, ncol = s)
+    
+    # generate initial values
+    X[, 1] &lt;- rbinom(r, n, p)
+    N[, 1] &lt;- rpois(r, n)
+    
+    # loop through number of nodes
+    for (i in 2:s) {
+        probs &lt;- X[, i - 1]/N[, i - 1]
+        N[, i] &lt;- rpois(r, X[, i - 1])
+        X[, i] &lt;- rbinom(r, N[, i - 1], replace(probs, probs &gt; 1, 1))
+    }
+    
+    return(list(X = X, N = N))
 }
 
 # run simulation
-results &lt;- simulation(500,0.5,1000,4)</code></pre>
+results &lt;- simulation(500, 0.5, 1000, 4)</code></pre>
 <p><strong>(e)</strong></p>
-<pre class="r"><code>mean(results$X[,2])</code></pre>
-<pre><code>[1] 249.848</code></pre>
+<pre class="r"><code>mean(results$X[, 2])</code></pre>
+<pre><code>[1] 249.152</code></pre>
 <p><strong>(f)</strong></p>
-<pre class="r"><code>sum(results$X[,4] &gt; results$X[,1])/1000</code></pre>
-<pre><code>[1] 0.167</code></pre>
+<pre class="r"><code>sum(results$X[, 4] &gt; results$X[, 1])/1000</code></pre>
+<pre><code>[1] 0.164</code></pre>
 <p><strong>(g)</strong></p>
 <p>I would expect the proability to be lower for <span class="math inline">\(X_{4}\)</span> than for <span class="math inline">\(X_{1}\)</span> the majority of the time due to the large mean and variance for Poisson random variables that you are dividing binomail random variables by to generate an updated probaility of success for future binomial random variables. This says that the number of copies of an allele in a population that changes stochastically over time will tend to zero in this format.</p>
 </div>
@@ -504,9 +505,9 @@ P(X_{1} = 0, X_{4} = 2) = 0
 <div id="session-information" class="section level2">
 <h2>Session Information</h2>
 <pre class="r"><code>sessionInfo()</code></pre>
-<pre><code>R version 3.3.1 (2016-06-21)
+<pre><code>R version 3.3.2 (2016-10-31)
 Platform: x86_64-pc-linux-gnu (64-bit)
-Running under: Ubuntu 16.04.1 LTS
+Running under: Gentoo/Linux
 
 locale:
  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -519,14 +520,11 @@ locale:
 attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
-other attached packages:
-[1] workflowr_0.2.0 rmarkdown_1.3  
-
 loaded via a namespace (and not attached):
- [1] backports_1.0.4 magrittr_1.5    rprojroot_1.1   htmltools_0.3.5
- [5] tools_3.3.1     yaml_2.1.14     Rcpp_0.12.6     stringi_1.1.1  
- [9] knitr_1.15.1    git2r_0.18.0    stringr_1.1.0   digest_0.6.11  
-[13] evaluate_0.10  </code></pre>
+ [1] backports_1.0.5 magrittr_1.5    rprojroot_1.2   formatR_1.4    
+ [5] tools_3.3.2     htmltools_0.3.5 yaml_2.1.14     Rcpp_0.12.9    
+ [9] stringi_1.1.2   rmarkdown_1.3   knitr_1.15.1    git2r_0.18.0   
+[13] stringr_1.2.0   digest_0.6.12   workflowr_0.3.0 evaluate_0.10  </code></pre>
 </div>
 
 <hr>

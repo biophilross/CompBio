@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Philipp Ross" />
+
+<meta name="date" content="2017-03-10" />
+
+<title>Final Project Title</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 54px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+
+.section h2 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h3 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h4 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h5 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h6 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = false;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Fundamentals of Computational Biology</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/jdblischak/workflowr">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Final Project Title</h1>
+<h4 class="author"><em>Philipp Ross</em></h4>
+<h4 class="date"><em>2017-03-10</em></h4>
+
+</div>
+
+
+<p><strong>Last updated:</strong> 2017-03-13</p>
+<p><strong>Code version:</strong> e75cac0</p>
+<div id="abstract" class="section level2">
+<h2>Abstract</h2>
+<p>The molecular mechanisms of cell-type evolution remain unclear. The sister cell-type hypothesis assumes that cell-types, much like individual genes, evolve by ‘furcation’ and that the historical events from ancestral to modern cell types can be represented as a tree-like network. <strong>REFERENCE</strong> However, recent studies have found pervasive concerted evolution in cell-type transcriptomes, which violates the assumption of individuation in generating tree-like representations of cell-type historical contingency. In other words, cell-types likely evolve by combinations of ‘furcation’ and fusion in the form of co-opted gene expression programs from other cell-types within the same organism. Here I look to use a combination of maximum likelihood phylogenetic tree construction along with grade of membership models to infer the evolutionary relationship between brown, beige, and white adipocytes.</p>
+</div>
+<div id="methods" class="section level2">
+<h2>Methods</h2>
+<div id="data-pre-processing" class="section level3">
+<h3>Data pre-processing</h3>
+<p>RNA-seq data was downloaded from the SRA for adipose tissue samples from Chicken, Opossum, Wallaby, Mouse, and Human species. <strong>REFERENCES</strong> Reads were psuedoaligned and expression quantified using kallisto. <strong>REFERENCE</strong> Counts were normalized and quality controlled using DESeq2’s regularized-log normalization. <strong>REFERENCE</strong> Binary expression matrices were generated using TPMs estimated by kallisto. <strong>REFERENCE</strong> A TPM greater than or equal to 2 was designated as expressed (1) whereas a TPM less than 2 was designated as not expressed (0).</p>
+</div>
+<div id="raxml" class="section level3">
+<h3>RAxML</h3>
+<p>Maximum-likelihood trees were generated using RAxML <strong>REFERENCE</strong> and the following command:</p>
+<pre><code>raxmlHPC -f a -m BINGAMMA -p 12345 -x 12345 -# 1000 -s expression.phylip</code></pre>
+<p>General formula for calculating the maximum likelihood of our data give the parameters</p>
+<p>Algorithm RAxML uses to search tree space</p>
+<p>Rate matrix used by RAxML for binary character state evolution</p>
+</div>
+<div id="countclust" class="section level3">
+<h3>CountClust</h3>
+<p>A grade of membership model was used to quantify the cluster proportions for each sample using different values of <span class="math inline">\(k\)</span>.</p>
+<p>CountClust <strong>REFERENCE</strong> assumes that the RNA-seq counts, <span class="math inline">\(c_{ng}\)</span>, for each sample <span class="math inline">\(n\)</span> and each gene <span class="math inline">\(g\)</span> can be modeled as a random draw from a multinomial distribution:</p>
+<p><span class="math inline">\((c_{n1}, c_{n2}, · · · , c_{nG})\)</span> ∼ <span class="math inline">\(Multinomial (c_{n+}, p_{n1}, p_{n2}, · · · , p_{nG})\)</span></p>
+<p>Where</p>
+<p><span class="math inline">\(p_{ng} := \sum_{k=1}^{K} q_{nk} \theta_{kg}\)</span></p>
+<p>and <span class="math inline">\(\theta_{gk}\)</span> represents the relative expression of gene <span class="math inline">\(g\)</span> in cluster <span class="math inline">\(k\)</span> and <span class="math inline">\(q_{nk}\)</span> the proportion of reads from sample <span class="math inline">\(n\)</span> coming from cluster <span class="math inline">\(k\)</span>.</p>
+<p>How does it fit the data?</p>
+<p>The following code was used to generate the results:</p>
+<pre class="r"><code>library(CountClust)
+
+counts &lt;- readRDS(&quot;../data/final_project/counts_matrix.rds&quot;)
+sampleTable &lt;- readRDS(&quot;../data/final_project/sample_table.rds&quot;)
+orthos &lt;- readRDS(&quot;../data/final_project/orthologs.rds&quot;)
+
+geneIDs &lt;- rownames(counts)
+geneNames &lt;- orthos[orthos$hid %in% geneIDs, ]$hname
+
+for (i in 2:10) {
+    FitGoM(t(counts), K = i, tol = 0.1, path_rda = paste0(&quot;../output/final_project/countclust/clustk&quot;, 
+        i, &quot;.rda&quot;))
+    load(paste0(&quot;../output/final_project/countclust/clustk&quot;, i, &quot;.rda&quot;))
+    assign(paste0(&quot;omega&quot;, i, sep = &quot;&quot;), eval(parse(text = paste0(&quot;Topic_clus_list$clust_&quot;, 
+        i, &quot;$omega&quot;))))
+    assign(paste0(&quot;theta&quot;, i, sep = &quot;&quot;), eval(parse(text = paste0(&quot;Topic_clus_list$clust_&quot;, 
+        i, &quot;$theta&quot;))))
+}</code></pre>
+<pre><code>
+Estimating on a 35 document collection.
+Fit and Bayes Factor Estimation for K = 2
+log posterior increase: 3808996.8, done.
+log BF( 2 ) = 16960723.88
+
+Estimating on a 35 document collection.
+Fit and Bayes Factor Estimation for K = 3
+log posterior increase: 12781064.5, done.
+log BF( 3 ) = 29216702.27
+
+Estimating on a 35 document collection.
+Fit and Bayes Factor Estimation for K = 4
+log posterior increase: 13649741.7, done.
+log BF( 4 ) = 32376879.82
+
+Estimating on a 35 document collection.
+Fit and Bayes Factor Estimation for K = 5
+log posterior increase: 13111130.1, 145452, done.
+log BF( 5 ) = 35706770.16
+
+Estimating on a 35 document collection.
+Fit and Bayes Factor Estimation for K = 6
+log posterior increase: 12676480.2, 96843.9, done.
+log BF( 6 ) = 36537164.59
+
+Estimating on a 35 document collection.
+Fit and Bayes Factor Estimation for K = 7
+log posterior increase: 12942780.6, 67785.1, done.
+log BF( 7 ) = 37460116.37
+
+Estimating on a 35 document collection.
+Fit and Bayes Factor Estimation for K = 8
+log posterior increase: 13928952.1, 88389.8, done.
+log BF( 8 ) = 38141356.62
+
+Estimating on a 35 document collection.
+Fit and Bayes Factor Estimation for K = 9
+log posterior increase: 9842922.1, 96303.3, done.
+log BF( 9 ) = 38381265.67
+
+Estimating on a 35 document collection.
+Fit and Bayes Factor Estimation for K = 10
+log posterior increase: 12939917.3, 116915.5, done.
+log BF( 10 ) = 39863139.93</code></pre>
+<pre class="r"><code>annotation &lt;- data.frame(sample_id = paste0(&quot;X&quot;, c(1:NROW(omega2))), tissue_label = factor(sampleTable$label, 
+    levels = rev(c(sampleTable$label))))</code></pre>
+</div>
+</div>
+<div id="results" class="section level2">
+<h2>Results</h2>
+<div id="data" class="section level3">
+<h3>Data</h3>
+<p>Our data as input for RAxML is a phylip formatted “alignment” file:</p>
+<pre><code>33 4530
+ERR522169  011101111110111111...
+ERR522170  011001111110011111...
+ERR522172  011001111111011111...
+ERR522173  011101111111011111...
+.
+.
+.</code></pre>
+<p>Our data as input for CountClust is a gene by sample count matrix:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">ERR522169</th>
+<th align="right">ERR522170</th>
+<th align="right">ERR522171</th>
+<th align="right">ERR522172</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">ENSG00000000005</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">36</td>
+</tr>
+<tr class="even">
+<td align="left">ENSG00000000460</td>
+<td align="right">517</td>
+<td align="right">584</td>
+<td align="right">167</td>
+<td align="right">144</td>
+</tr>
+<tr class="odd">
+<td align="left">ENSG00000001461</td>
+<td align="right">1164</td>
+<td align="right">893</td>
+<td align="right">400</td>
+<td align="right">407</td>
+</tr>
+<tr class="even">
+<td align="left">ENSG00000001561</td>
+<td align="right">389</td>
+<td align="right">18</td>
+<td align="right">160</td>
+<td align="right">106</td>
+</tr>
+<tr class="odd">
+<td align="left">ENSG00000002746</td>
+<td align="right">57</td>
+<td align="right">50</td>
+<td align="right">17</td>
+<td align="right">36</td>
+</tr>
+<tr class="even">
+<td align="left">ENSG00000002834</td>
+<td align="right">7884</td>
+<td align="right">6185</td>
+<td align="right">3484</td>
+<td align="right">2489</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="raxml-1" class="section level3">
+<h3>RAxML</h3>
+<p><img src="figure/final_project.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/final_project.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="countclust-1" class="section level3">
+<h3>CountClust</h3>
+<p><img src="figure/final_project.Rmd/k3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">V1</th>
+<th align="left">V2</th>
+<th align="left">V3</th>
+<th align="left">V4</th>
+<th align="left">V5</th>
+<th align="left">V6</th>
+<th align="left">V7</th>
+<th align="left">V8</th>
+<th align="left">V9</th>
+<th align="left">V10</th>
+<th align="left">V11</th>
+<th align="left">V12</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">FN1</td>
+<td align="left">THBS1</td>
+<td align="left">SPOCK1</td>
+<td align="left">RCN1</td>
+<td align="left">TIMP3</td>
+<td align="left">PAPPA</td>
+<td align="left">STC1</td>
+<td align="left">CLDN11</td>
+<td align="left">PCDH9</td>
+<td align="left">APOD</td>
+<td align="left">RPS15A</td>
+<td align="left">ABI3BP</td>
+</tr>
+<tr class="even">
+<td align="left">2</td>
+<td align="left">LARS2</td>
+<td align="left">ATP5B</td>
+<td align="left">FASN</td>
+<td align="left">PRDM6</td>
+<td align="left">NABP1</td>
+<td align="left">ACSL1</td>
+<td align="left">CAT</td>
+<td align="left">CTSB</td>
+<td align="left">C11orf54</td>
+<td align="left">ACOX1</td>
+<td align="left">PNPLA2</td>
+<td align="left">ACO2</td>
+</tr>
+<tr class="odd">
+<td align="left">3</td>
+<td align="left">PLIN1</td>
+<td align="left">PPL</td>
+<td align="left">HSPA2</td>
+<td align="left">PTRF</td>
+<td align="left">GPC1</td>
+<td align="left">NFASC</td>
+<td align="left">TPPP3</td>
+<td align="left">CHAD</td>
+<td align="left">TIE1</td>
+<td align="left">SSTR2</td>
+<td align="left">PLXND1</td>
+<td align="left">GCGR</td>
+</tr>
+</tbody>
+</table>
+<p><img src="figure/final_project.Rmd/k6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">V1</th>
+<th align="left">V2</th>
+<th align="left">V3</th>
+<th align="left">V4</th>
+<th align="left">V5</th>
+<th align="left">V6</th>
+<th align="left">V7</th>
+<th align="left">V8</th>
+<th align="left">V9</th>
+<th align="left">V10</th>
+<th align="left">V11</th>
+<th align="left">V12</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">FN1</td>
+<td align="left">RPS15A</td>
+<td align="left">DCBLD2</td>
+<td align="left">PAPPA</td>
+<td align="left">THBS1</td>
+<td align="left">RPS23</td>
+<td align="left">RPS13</td>
+<td align="left">INHBA</td>
+<td align="left">ANXA2</td>
+<td align="left">RPS20</td>
+<td align="left">HAS2</td>
+<td align="left">ABI3BP</td>
+</tr>
+<tr class="even">
+<td align="left">2</td>
+<td align="left">PRDM6</td>
+<td align="left">DPT</td>
+<td align="left">MYCBP2</td>
+<td align="left">SORL1</td>
+<td align="left">ADAMTS9</td>
+<td align="left">CIDEA</td>
+<td align="left">COL14A1</td>
+<td align="left">DCN</td>
+<td align="left">MMP7</td>
+<td align="left">TSPAN9</td>
+<td align="left">FBN1</td>
+<td align="left">HMCN1</td>
+</tr>
+<tr class="odd">
+<td align="left">3</td>
+<td align="left">LARS2</td>
+<td align="left">FASN</td>
+<td align="left">ATP5B</td>
+<td align="left">NABP1</td>
+<td align="left">CTSB</td>
+<td align="left">C11orf54</td>
+<td align="left">ACOX1</td>
+<td align="left">ACO2</td>
+<td align="left">PNPLA2</td>
+<td align="left">PANK3</td>
+<td align="left">LPGAT1</td>
+<td align="left">TSPAN12</td>
+</tr>
+<tr class="even">
+<td align="left">4</td>
+<td align="left">APOD</td>
+<td align="left">PLIN2</td>
+<td align="left">PDK4</td>
+<td align="left">CRYAB</td>
+<td align="left">FKBP5</td>
+<td align="left">PTP4A1</td>
+<td align="left">GPAM</td>
+<td align="left">ATP2A2</td>
+<td align="left">SLC2A5</td>
+<td align="left">UAP1</td>
+<td align="left">TIMP3</td>
+<td align="left">PPARGC1A</td>
+</tr>
+<tr class="odd">
+<td align="left">5</td>
+<td align="left">PLIN1</td>
+<td align="left">PTRF</td>
+<td align="left">HSPA2</td>
+<td align="left">TPPP3</td>
+<td align="left">PPL</td>
+<td align="left">CHAD</td>
+<td align="left">GPC1</td>
+<td align="left">NFASC</td>
+<td align="left">SSTR2</td>
+<td align="left">TIE1</td>
+<td align="left">RBM5</td>
+<td align="left">RGS5</td>
+</tr>
+<tr class="even">
+<td align="left">6</td>
+<td align="left">COL1A1</td>
+<td align="left">IGFBP3</td>
+<td align="left">TPM1</td>
+<td align="left">TNC</td>
+<td align="left">SULF1</td>
+<td align="left">SMAD3</td>
+<td align="left">SPOCK1</td>
+<td align="left">SCUBE3</td>
+<td align="left">LOXL4</td>
+<td align="left">LTBP1</td>
+<td align="left">DDOST</td>
+<td align="left">TPM2</td>
+</tr>
+</tbody>
+</table>
+<p><img src="figure/final_project.Rmd/k10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">V1</th>
+<th align="left">V2</th>
+<th align="left">V3</th>
+<th align="left">V4</th>
+<th align="left">V5</th>
+<th align="left">V6</th>
+<th align="left">V7</th>
+<th align="left">V8</th>
+<th align="left">V9</th>
+<th align="left">V10</th>
+<th align="left">V11</th>
+<th align="left">V12</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">FN1</td>
+<td align="left">CSF3</td>
+<td align="left">RPS15A</td>
+<td align="left">THBS1</td>
+<td align="left">TGFBI</td>
+<td align="left">PAPPA</td>
+<td align="left">VIM</td>
+<td align="left">ABI3BP</td>
+<td align="left">HAS2</td>
+<td align="left">RPS16</td>
+<td align="left">GREM1</td>
+<td align="left">P4HA2</td>
+</tr>
+<tr class="even">
+<td align="left">2</td>
+<td align="left">PRDM6</td>
+<td align="left">ADAMTS9</td>
+<td align="left">SPTBN1</td>
+<td align="left">CIDEA</td>
+<td align="left">TSPAN9</td>
+<td align="left">MYCBP2</td>
+<td align="left">SORL1</td>
+<td align="left">SPTAN1</td>
+<td align="left">EEF1A2</td>
+<td align="left">HMCN1</td>
+<td align="left">CDH5</td>
+<td align="left">RIC8B</td>
+</tr>
+<tr class="odd">
+<td align="left">3</td>
+<td align="left">PDK4</td>
+<td align="left">PTP4A1</td>
+<td align="left">STC1</td>
+<td align="left">ATP2A2</td>
+<td align="left">UAP1</td>
+<td align="left">ETF1</td>
+<td align="left">PPARGC1A</td>
+<td align="left">PLIN2</td>
+<td align="left">DKC1</td>
+<td align="left">EIF2S1</td>
+<td align="left">RABGGTB</td>
+<td align="left">NOP56</td>
+</tr>
+<tr class="even">
+<td align="left">4</td>
+<td align="left">IGFBP3</td>
+<td align="left">ANXA2</td>
+<td align="left">TPM1</td>
+<td align="left">CITED2</td>
+<td align="left">RPN2</td>
+<td align="left">SMAD3</td>
+<td align="left">PLS3</td>
+<td align="left">TMEM200A</td>
+<td align="left">TNFRSF11B</td>
+<td align="left">WDR1</td>
+<td align="left">CYR61</td>
+<td align="left">CEMIP</td>
+</tr>
+<tr class="odd">
+<td align="left">5</td>
+<td align="left">ATP5B</td>
+<td align="left">C11orf54</td>
+<td align="left">ACO2</td>
+<td align="left">ACSL1</td>
+<td align="left">ACOX1</td>
+<td align="left">HADHA</td>
+<td align="left">ETFDH</td>
+<td align="left">OGDH</td>
+<td align="left">DLAT</td>
+<td align="left">PRKAR2B</td>
+<td align="left">TMEM45B</td>
+<td align="left">TMED5</td>
+</tr>
+<tr class="even">
+<td align="left">6</td>
+<td align="left">LARS2</td>
+<td align="left">SLC27A1</td>
+<td align="left">PRRX1</td>
+<td align="left">POSTN</td>
+<td align="left">ULK1</td>
+<td align="left">RBP4</td>
+<td align="left">GREB1</td>
+<td align="left">PFKFB3</td>
+<td align="left">CCND2</td>
+<td align="left">CDC42</td>
+<td align="left">NABP1</td>
+<td align="left">TTYH2</td>
+</tr>
+<tr class="odd">
+<td align="left">7</td>
+<td align="left">PTX3</td>
+<td align="left">MME</td>
+<td align="left">GPAM</td>
+<td align="left">SLC2A5</td>
+<td align="left">SERPINF1</td>
+<td align="left">C1orf198</td>
+<td align="left">NID2</td>
+<td align="left">MGST3</td>
+<td align="left">RCN1</td>
+<td align="left">CYB5A</td>
+<td align="left">GLDN</td>
+<td align="left">EGFL6</td>
+</tr>
+<tr class="even">
+<td align="left">8</td>
+<td align="left">PLIN1</td>
+<td align="left">HSPA2</td>
+<td align="left">NFASC</td>
+<td align="left">GPC1</td>
+<td align="left">PPL</td>
+<td align="left">CHAD</td>
+<td align="left">PTRF</td>
+<td align="left">SSTR2</td>
+<td align="left">NLGN3</td>
+<td align="left">TPPP3</td>
+<td align="left">GCGR</td>
+<td align="left">RBM5</td>
+</tr>
+<tr class="odd">
+<td align="left">9</td>
+<td align="left">MMP7</td>
+<td align="left">NUP37</td>
+<td align="left">ADD1</td>
+<td align="left">ZAR1L</td>
+<td align="left">PPP2R5E</td>
+<td align="left">LRRC14B</td>
+<td align="left">FYB</td>
+<td align="left">ARL14EP</td>
+<td align="left">RGS18</td>
+<td align="left">MYOM2</td>
+<td align="left">DNAJC27</td>
+<td align="left">SLC22A3</td>
+</tr>
+<tr class="even">
+<td align="left">10</td>
+<td align="left">CTSB</td>
+<td align="left">FASN</td>
+<td align="left">GAS6</td>
+<td align="left">SPON1</td>
+<td align="left">COL5A1</td>
+<td align="left">NFIA</td>
+<td align="left">SNED1</td>
+<td align="left">COL4A2</td>
+<td align="left">LPGAT1</td>
+<td align="left">ADAMTS5</td>
+<td align="left">CAV1</td>
+<td align="left">PCOLCE</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="conclusions" class="section level2">
+<h2>Conclusions</h2>
+<p>How can we combine evolutionary inference with grade of membership models to make evolutionary statements about the different clusters found by CountClust?</p>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+</div>
+<div id="session-information" class="section level2">
+<h2>Session Information</h2>
+<pre><code>R version 3.3.2 (2016-10-31)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: Gentoo/Linux
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] ggtree_1.6.10    CountClust_0.1.2 ggplot2_2.2.1   
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_0.12.9        RColorBrewer_1.1-2 highr_0.6         
+ [4] formatR_1.4        git2r_0.18.0       plyr_1.8.4        
+ [7] workflowr_0.3.0    tools_3.3.2        digest_0.6.12     
+[10] jsonlite_1.3       evaluate_0.10      tibble_1.2        
+[13] gtable_0.2.0       nlme_3.1-128       lattice_0.20-34   
+[16] mgcv_1.8-15        Matrix_1.2-7.1     yaml_2.1.14       
+[19] parallel_3.3.2     cluster_2.0.5      stringr_1.2.0     
+[22] knitr_1.15.1       gtools_3.5.0       stats4_3.3.2      
+[25] rprojroot_1.2      grid_3.3.2         nnet_7.3-12       
+[28] cowplot_0.7.0      maptpx_1.9-2       flexmix_2.3-13    
+[31] rmarkdown_1.3      limma_3.30.12      tidyr_0.6.1       
+[34] reshape2_1.4.2     magrittr_1.5       MASS_7.3-45       
+[37] backports_1.0.5    scales_0.4.1       htmltools_0.3.5   
+[40] modeltools_0.2-21  assertthat_0.1     permute_0.9-4     
+[43] picante_1.6-2      colorspace_1.3-2   ape_4.1           
+[46] labeling_0.3       stringi_1.1.2      lazyeval_0.2.0    
+[49] munsell_0.4.3      slam_0.1-40        vegan_2.4-2       </code></pre>
+</div>
+
+<hr>
+<p>
+    This site was created with <a href="http://rmarkdown.rstudio.com">R Markdown</a>
+</p>
+<hr>
+
+<!-- To enable disqus, uncomment the section below and provide your disqus_shortname -->
+
+<!-- disqus
+  <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'rmarkdown'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+-->
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

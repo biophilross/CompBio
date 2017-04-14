@@ -1,0 +1,36 @@
+---
+title: "Continuous Time Markov Processes"
+author: "John Novembre"
+date: 2017-02-09
+output: html_document
+---
+
+```{r read-chunk, include=FALSE, cache=FALSE}
+knitr::read_chunk("chunks.R")
+```
+
+```{r knitr-opts-chunk, include=FALSE}
+```
+
+**Last updated:** `r Sys.Date()`
+
+**Code version:** `r workflowr::extract_commit(".", 1)$sha1`
+
+## Introduction
+
+
+## Lecture
+
+Continuous time markov chains -> counting processes -> poisson process -> superposition property
+
+### Superposition property
+
+If we have two poisson processes, then we cah superimpose them to make a new poisson process where the rate is equal to the sum of the two individual poisson processes. $N(t)$ ~ $Pois((\lambda_{1} + \lambda_{2})t)$
+
+$$
+N(t) 
+$$
+
+### Thinning property
+
+THe opposite of the superposition property. We can split one poisson process into multiple poisson processes with their own rates.

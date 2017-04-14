@@ -1,0 +1,562 @@
+---
+title: "HW5"
+author: "Philipp Ross"
+date: '2017-02-07'
+output: html_document
+---
+
+```{r read-chunk, include=FALSE, cache=FALSE}
+knitr::read_chunk("chunks.R")
+```
+
+```{r knitr-opts-chunk, include=FALSE}
+```
+
+**Last updated:** `r Sys.Date()`
+
+**Code version:** `r workflowr::extract_commit(".", 1)$sha1`
+
+Libraries used in this document:
+
+```{r}
+sshhh("tidyr")
+sshhh("dplyr")
+sshhh("magrittr")
+sshhh("ggplot2")
+sshhh("cowplot")
+sshhh("tibble")
+sshhh("gtools")
+```
+
+Reading in the data:
+
+```{r}
+dat <- read.table("../data/thrush-data.str",header=F)
+colnames(dat) <- c("iid","origin",paste(rep("locus_"),1:(ncol(dat)-2),sep=""))
+```
+
+What does our data look like?
+
+```{r}
+knitr::kable(head(dat),caption="Thrush data")
+```
+
+We can see that the data has some peculiarities. -9 represents missing data and there is no allele 14! Best we substitute all -9 indicators with an NA and if the allele is greater than 13, just subtract one so we can use these to index our data structures.
+
+```{r}
+dat[dat==-9] <- NA
+values_to_change <- dat[,3:ncol(dat)][dat[,3:ncol(dat)] > 13 & !is.na(dat[,3:ncol(dat)])]
+dat[,3:ncol(dat)][dat[,3:ncol(dat)] > 13 & !is.na(dat[,3:ncol(dat)])] <- values_to_change - 1
+dat <- tibble::as_tibble(dat)
+```
+
+Now we should have a data frame where missing data is indicated by NA and allele are numbered 1 - 21. We will need to remember to go back and add 1 to every allele number over 13.
+
+## Structure model without admixture
+
+### Functions
+
+Here we can implement the necessary functions to update the gibbs sampler:
+
+```{r}
+# Random useful functions
+
+# normalize a vector
+normalize <- function(x){
+  return(x/sum(x))
+}
+
+# special log function to avoid log(0)
+mylog <- function(x) {
+  return(ifelse(x==0,0,log(x)))
+}
+```
+  
+```{r}
+# Update functions
+
+#' @param arg.x input data 
+#' @param arg.p p_klj list of length k of j by l matrices of allele frequencies per locus per population
+#' @param arg.k number of populations
+#' @return vector of population assignments for each individual i
+sample_z1 <- function(arg.x,arg.p,arg.k) {
+  
+  # don't get confused by arguments
+  x <- arg.x
+  p <- arg.p
+  k <- arg.k
+  
+  # how many loci do we have?
+  num_loci <- ncol(x)
+  
+  # how many individuals do we have?
+  num_indi <- nrow(x)
+  
+  # empty z vector of all individuals
+  z <- numeric(num_indi)
+  
+  # for each individual
+  for (xi in 1:num_indi) {
+    
+    # initialize k length weights vector
+    weights <- numeric(k)
+    
+    # for each population
+    for (ki in 1:k) {
+      
+      # alleles for individual xi
+      js <- na.omit(as.numeric(x[xi,]))
+      
+      # allele frequencies for alleles js at each loci for individual xi
+      freqs <- p[[ki]][js]
+      
+      # log them to avoid working with small numbers
+      weights[ki] <- sum(mylog(p[[ki]][js]))
+      
+    } # end for population ki
+    
+    # normalize the exponentiated weights
+    theta <- normalize(exp(weights))
+    
+    # draw a population sample
+    z[xi] <- sample(x=1:k,size=1,replace=T,prob=theta)
+    
+  } # end for individual xi
+  
+  return(z)
+}
+
+#' @param arg.x input data
+#' @param arg.z vector of length nrow(arg.x)
+#' @param arg.k number of populations
+#' @return a k-length list of j alleles by l loci matrices 
+sample_p1 <- function(arg.x,arg.z,arg.k) {
+  
+  # don't get confused by arguments
+  x <- arg.x
+  z <- arg.z
+  k <- arg.k
+  
+  # how many loci in our data?
+  num_loci <- ncol(x)
+  
+  # what alleles exist in our data set?
+  alleles <- as.integer(names(table(unlist(x))))
+  
+  # how many alleles do we have?
+  num_alleles <- max(alleles)
+  
+  # convert to tibble for easy joining
+  allele_counts <- tibble::tibble(allele=alleles)
+  
+  # p is a k length list of matrices, one per population
+  p <- vector("list",k)
+  
+  # for each population
+  for (ki in 1:k) {
+    
+    # what individuals are in population ki?
+    ink <- x[z == ki,]
+    
+    # initialize matrix for population ki
+    p[[ki]] <- matrix(0,nrow=num_alleles,ncol=num_loci)
+    
+    # for each locus li
+    for (li in 1:num_loci) {
+      
+      # count the number of each allele
+      ti <- tibble::as_tibble(table(ink[li]))
+      
+      # merge to create count of all alleles
+      # these steps are just to make the data easier to work with
+      colnames(ti)      <- c("allele","count")
+      ti$allele         <- as.integer(ti$allele)
+      loci_counts       <- dplyr::full_join(allele_counts,ti,by="allele")
+      loci_counts$count <- ifelse(is.na(loci_counts$count),0,loci_counts$count)
+      
+      # sample allele frequencies for each locus
+      # +1 for the alpha parameter is due to our prior on lambda
+      # where lambda represents our parameters for the Dirichlet on
+      # allele frequencies in the model without admixture
+      p[[ki]][,li]  <- gtools::rdirichlet(n=1,alpha=1+loci_counts$count)[1,] 
+      
+    } # end for loci li
+    
+  } # end for population ki
+  
+  return(p)
+}
+
+```
+
+Next we'll write the gibbs sampler itself:
+
+```{r}
+# Gibbs sampler function
+gibbs1 <- function(arg.niter=1000,arg.x,arg.k) {
+  
+  niter <- arg.niter
+  x     <- arg.x
+  k     <- arg.k
+  
+  # how many alleles in our data set?
+  alleles <- as.integer(names(table(unlist(x))))
+  num_alleles <- length(alleles)
+  
+  # how many loci?
+  num_loci <- ncol(x)
+  
+  # resulting matrix should have z's for each individual
+  res <- list(z=matrix(0,nrow=niter,ncol=nrow(x)),prob=numeric(niter))
+  
+  # initialize
+  z <- sample(x=1:k,size=nrow(x),replace=T,prob=rep(1/k,k))
+  res$z[1,] <- z
+  
+  # update
+  for (i in 2:niter) {
+    
+    # sample allele frequencies given the individual populations of origin
+    # and the number of clusters (populations) k
+    p <- sample_p1(x,z,k)
+    
+    # calculate the posterior probability
+    post.prob <- sapply(1:k, function(ki) {
+      ink <- x[z==ki,]
+      sum(mylog(apply(ink, 1, function(indi) {prod(p[[ki]][indi])})))
+    })
+    
+    # sample populations of origin given the allele frequencies per population
+    # per locus and the number of clusters (populations) k
+    z <- sample_z1(x,p,k)
+    
+    # store results
+    res$z[i,] <- z
+  }
+  return(res)
+}
+```
+
+### Tests
+
+Just running this to test that the functions return what's expected:
+
+```{r}
+# remove the first two columns from our data since we're not using them
+gdat.test <- dat[,3:ncol(dat)]
+
+num_individuals <- nrow(gdat.test )
+
+# initialize
+k.test <- 3
+z.test <- sample(x=1:k.test,size=num_individuals,replace=T,prob=rep(1/k.test,k.test))
+
+# run
+p.test <- sample_p1(gdat.test,z.test,k.test)
+sample_z1(gdat.test,p.test,k.test)
+
+# calculate posterior prob
+sapply(1:k.test, function(ki) {
+  ink <- gdat.test[z.test==ki,]
+  sum(mylog(na.omit(apply(ink, 1, function(indi) {prod(p.test[[ki]][indi])}))))
+})
+```
+
+### Results
+
+For the results we'll want to generate a structure plot. We can write a function for that:
+
+```{r}
+structure_plot <- function(ti) {
+  
+  # order by number of counts in
+  # population 1
+  f <- ti %>% 
+    dplyr::arrange(pop,desc(n)) %>% 
+    dplyr::filter(pop=="1") %$% 
+    ind
+  ti$ind <- factor(ti$ind,levels=f)
+  
+  ggplot(ti,aes(x=ind,y=n,fill=pop)) + 
+    geom_bar(colour="black",size=0.1,stat="identity") +
+    theme_void() + 
+    theme(legend.position="top")
+}
+```
+
+Now let's run the simulation and view the results:
+
+```{r}
+# set parameters
+k      <- 3
+niter  <- 10000
+burnin <- 3000
+
+# remove the first two columns from our data since we're not using them
+gdat <- dat[,3:ncol(dat)]
+
+# run our gibbs sampler
+res <- gibbs1(arg.niter=niter,arg.x=gdat,arg.k=k)
+```
+
+I already ran the model before compiling this document so let's just load the results here and plot them:
+
+```{r}
+# save/load results
+#saveRDS(object=res,file="../output/hw5/res_without_admixture.rds")
+res <- readRDS("../output/hw5/res_without_admixture.rds")
+
+# reformat the output
+
+# remove burn-in
+# make sure samples are not correlated
+ti <- tibble::as_tibble(t(res$z))
+ti <- ti[, (burnin+1):niter]
+ti <- ti[, c(1, seq(100, niter-burnin, 100))]
+
+# reformat to get a data structure
+# that's easier to work with and plot
+colnames(ti) <- 1:ncol(ti)
+ti$ind <- 1:nrow(ti)
+
+ti <- ti %>%
+  tidyr::gather(obs, pop, -ind) %>%
+  dplyr::mutate(pop = as.character(pop)) %>%
+  dplyr::group_by(ind, pop) %>%
+  dplyr::summarise(n = n())
+
+structure_plot(ti)
+```
+
+## Structure model with admixture
+
+In order to include admixture in our model, two things change:
+
+We now include a vector $Q$ which will represent the proportion of invidiaul $i$'s genome that originated from population $k$. We also need to change our assumption for $z$, which was that each individual originated in some population $k$. Our $Z$ now becomes an $I$ by $L$ matrix corresponding to the population of origin of allele copy $j$ at locus $l$ in individual $i$. An allele copy in diffferent individuals will always have the same population of origin.
+
+### Functions
+
+```{r,eval=F}
+# Update functions
+
+#' @param arg.x input data 
+#' @param arg.p p_klj list of length k of j by l matrices of allele frequencies per locus per population
+#' @param arg.k number of populations
+#' @param arg.q admixture proportions for individuals
+#' @return vector of the length num_alleles identifying allele population of origin
+sample_z2 <- function(arg.x,arg.p,arg.k,arg.q) {
+  
+  # don't get confused by arguments
+  x <- arg.x
+  p <- arg.p
+  k <- arg.k
+  q <- arg.q
+  
+  # how many loci do we have?
+  num_loci <- ncol(x)
+  
+  # how many individuals?
+  num_indi <- nrow(x)
+  
+  # what alleles exist in our data set?
+  alleles <- as.integer(names(table(unlist(x))))
+  
+  # how many alleles do we have?
+  num_alleles <- max(alleles)
+  
+  # empty vector of allele copy origins
+  z <- numeric(num_alleles)
+  
+  # for each allele
+  for (ji in 1:num_alleles) {
+    
+    # initialize k length weights vector
+    weights <- numeric(k)
+    
+    # for each population
+    for (ki in 1:k) {
+      
+      # what alleles originated in population ki?
+      alleles_ink <- which(z == ki)
+      
+      # for each individial
+      for (xi in 1:num_indi) {
+      
+        # alleles for this individual at each loci
+        ialleles <- as.numeric(x[xi,])[loci]
+        
+        # initialize vector of length num_loci
+        freqs <- numeric(num_loci)
+        
+        # for each allele in population ki
+        for (loci in 1:num_loci) {
+        
+          # extract allele frequencies for allele alleles_ink and loci loci_ink
+          # and multiply those frequencies by the admixture proportions for
+          # individual xi being from population ki
+          if(ialleles[loci] %in% alleles_ink) {
+            freqs[xi,] <- p[[ki]][which(alleles_ink == ialleles[loci]),loci] * q[xi,ki]
+          }
+      
+        } # end for loci in 1:num_loci
+      
+        # log them to avoid working with small numbers
+        weights[ki] <- sum(mylog(freqs))
+      
+      } # end for individual xi
+    
+    } # end for population ki
+    
+    # normalize the exponentiated weights
+    theta <- normalize(exp(weights))
+    
+    # draw a population sample
+    z[ji] <- sample(x=1:k,size=1,replace=T,prob=theta)
+  
+  } # end for allele ji  
+  
+  return(z)
+  
+}
+
+#' @param arg.x input data
+#' @param arg.z vector of length j
+#' @param arg.k number of populations
+#' @return a k-length list of j alleles by l loci matrices 
+sample_p2 <- function(arg.x,arg.z,arg.k) {
+  
+  # don't get confused by arguments
+  x <- arg.x
+  z <- arg.z
+  k <- arg.k
+  
+  # what alleles exist in our data set?
+  alleles <- as.integer(names(table(unlist(x))))
+  
+  # convert to tibble for easy joining
+  allele_counts <- tibble::tibble(allele=alleles)
+  
+  # p is a k length list of matrices
+  p <- vector("list",k)
+  
+  # how many loci in our data?
+  num_loci <- ncol(x)
+  
+  # for each population k_i
+  for (ki in 1:k) {
+    
+    # what alleles originated in population ki
+    ink <- which(z == ki)
+    
+    # initialize matrix for ki
+    p[[ki]] <- matrix(0,nrow=nrow(allele_counts),ncol=num_loci)
+    
+    # for each locus li
+    for (loci in 1:num_loci) {
+      
+      # what individuals have those alleles at locus li
+      # and what are those alleles
+      ind <- x[x[,loci] %in% ink,][,loci]
+      
+      # count the number of individuals with those alleles
+      ti <- tibble::as_tibble(table(ind))
+      
+      # merge to create count of all individuals with those alleles
+      colnames(ti)      <- c("allele","count")
+      ti$allele         <- as.integer(ti$allele)
+      loci_counts       <- dplyr::full_join(allele_counts,ti,by="allele")
+      loci_counts$count <- ifelse(is.na(loci_counts$count),0,loci_counts$count)
+      
+      # sample allele frequencies at each locus
+      p[[ki]][,loci] <- gtools::rdirichlet(n=1,alpha=loci_counts$count)[1,] 
+      
+    }
+    
+  }
+  
+  return(p)
+}
+
+#' @param arg.x input data
+#' @param arg.z j length vector of population origins
+#' @param arg.k number of clusters
+#' @return i by k matrix of admixture proportions
+sample_q2 <- function(arg.x,arg.z,arg.k,arg.a) {
+  
+  # don't get confused by arguments
+  x <- arg.x
+  z <- arg.z
+  k <- arg.k
+  
+  # how many individuals?
+  num_indi <- nrow(x)
+  
+  # initialize i by k matrix
+  q <- matrix(0,nrow=num_indi,ncol=k)
+  
+  # for each individual
+  for (xi in 1:num_indi) {
+    
+    # k length vector of allele counts per population
+    counts <- numeric(k)
+    
+    # for each population
+    for (ki in 1:k) {
+      
+      # what alleles originated in population ki
+      ink <- which(z == ki)
+      
+      # how many of those alleles does individual xi have
+      counts[ki] <- sum(x[xi,] %in% ink)
+                    
+    }
+    
+    # sample mixture proportions for each individual
+    q[xi,] <- gtools::rdirichlet(n=1,alpha=alpha+counts)[1,] 
+    
+  }
+  
+  return(q)
+  
+}
+
+update_a <- function(arg.a) {
+  
+  # don't get confused by arguments
+  a <- arg.a
+  
+  # need a target function
+  # calculate ratio of proposed to current values
+  # if ratio is greater than runif(1,min = 0,max = 10), accept it
+  # otherwise, reject and stay at current value
+  
+  return(a_prime)
+  
+}
+
+```
+
+Next we'll write the gibbs sampler itself:
+
+```{r,eval=F}
+gibbs2 <- function(arg.niter=1000,arg.x,arg.k) {
+  
+}
+```
+
+### Tests
+
+Just running this to test that the functions return what's expected:
+
+```{r,eval=F}
+
+```
+
+### Results
+
+
+
+## Session Information
+
+```{r session-info}
+```

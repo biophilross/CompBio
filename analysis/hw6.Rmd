@@ -1,0 +1,58 @@
+---
+title: "HW6"
+author: "Philipp Ross"
+date: 2017-03-08
+output: html_document
+---
+
+```{r read-chunk, include=FALSE, cache=FALSE}
+knitr::read_chunk("chunks.R")
+```
+
+```{r knitr-opts-chunk, include=FALSE}
+```
+
+**Last updated:** `r Sys.Date()`
+
+**Code version:** `r workflowr::extract_commit(".", 1)$sha1`
+
+## Hidden and continuous time markov models
+
+### Problem 1
+
+The updates in the Baum- Welch (EM) algorithm depend on a few key terms listed below. For each one, show how the term can be expressed as a function of the forward and backward variables.
+
+**(a)**
+
+$$
+E[#t_{ij}(Q)|\lambda(t),O]
+$$
+
+**(b)**
+
+$$
+E[#o_{ij}(Q)|\lambda(t),O]
+$$
+
+**(c)**
+
+$$
+E[#times in state i|\lambda(t), O] = n \sum_{i=1}^{n} \alpha_{i}(j) \beta_{i}(j)
+$$
+
+**(d)**
+
+$$
+P(Q_{1} =i|\lambda(t),O)
+$$
+
+## Problem 2
+
+**(a)**
+
+Google difference of two randomly distributed exponential random variables
+
+## Session Information
+
+```{r session-info}
+```

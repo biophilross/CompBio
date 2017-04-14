@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Philipp Ross" />
+
+<meta name="date" content="2017-02-07" />
+
+<title>HW5</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 54px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+
+.section h2 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h3 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h4 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h5 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h6 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = false;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Fundamentals of Computational Biology</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/jdblischak/workflowr">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">HW5</h1>
+<h4 class="author"><em>Philipp Ross</em></h4>
+<h4 class="date"><em>2017-02-07</em></h4>
+
+</div>
+
+
+<p><strong>Last updated:</strong> 2017-03-12</p>
+<p><strong>Code version:</strong> e75cac0</p>
+<p>Libraries used in this document:</p>
+<pre class="r"><code>sshhh(&quot;tidyr&quot;)
+sshhh(&quot;dplyr&quot;)
+sshhh(&quot;magrittr&quot;)
+sshhh(&quot;ggplot2&quot;)
+sshhh(&quot;cowplot&quot;)
+sshhh(&quot;tibble&quot;)
+sshhh(&quot;gtools&quot;)</code></pre>
+<p>Reading in the data:</p>
+<pre class="r"><code>dat &lt;- read.table(&quot;../data/thrush-data.str&quot;, header = F)
+colnames(dat) &lt;- c(&quot;iid&quot;, &quot;origin&quot;, paste(rep(&quot;locus_&quot;), 1:(ncol(dat) - 2), 
+    sep = &quot;&quot;))</code></pre>
+<p>What does our data look like?</p>
+<pre class="r"><code>knitr::kable(head(dat), caption = &quot;Thrush data&quot;)</code></pre>
+<table>
+<caption>Thrush data</caption>
+<thead>
+<tr class="header">
+<th align="right">iid</th>
+<th align="right">origin</th>
+<th align="right">locus_1</th>
+<th align="right">locus_2</th>
+<th align="right">locus_3</th>
+<th align="right">locus_4</th>
+<th align="right">locus_5</th>
+<th align="right">locus_6</th>
+<th align="right">locus_7</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">6</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">2</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">4</td>
+<td align="right">2</td>
+<td align="right">6</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">4</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="right">10</td>
+<td align="right">2</td>
+<td align="right">4</td>
+<td align="right">2</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">2</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="right">10</td>
+<td align="right">2</td>
+<td align="right">4</td>
+<td align="right">3</td>
+<td align="right">6</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">10</td>
+<td align="right">8</td>
+</tr>
+<tr class="odd">
+<td align="right">1219</td>
+<td align="right">2</td>
+<td align="right">4</td>
+<td align="right">3</td>
+<td align="right">6</td>
+<td align="right">1</td>
+<td align="right">3</td>
+<td align="right">2</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="right">1219</td>
+<td align="right">2</td>
+<td align="right">13</td>
+<td align="right">5</td>
+<td align="right">6</td>
+<td align="right">2</td>
+<td align="right">-9</td>
+<td align="right">2</td>
+<td align="right">4</td>
+</tr>
+</tbody>
+</table>
+<div id="structure-model-without-admixture" class="section level2">
+<h2>Structure model without admixture</h2>
+<div id="functions" class="section level3">
+<h3>Functions</h3>
+<p>Here we can implement the necessary functions to update the gibbs sampler:</p>
+<pre class="r"><code># Random useful functions
+
+# normalize a vector
+normalize &lt;- function(x) {
+    return(x/sum(x))
+}
+
+# special log function to avoid log(0)
+mylog &lt;- function(x) {
+    return(ifelse(x == 0, 0, log(x)))
+}</code></pre>
+<pre class="r"><code># Update functions
+
+#&#39; @param arg.x input data 
+#&#39; @param arg.p p_klj list of length k of j by l matrices of allele frequencies per locus per population
+#&#39; @param arg.k number of populations
+#&#39; @return vector of population assignments for each individual i
+sample_z1 &lt;- function(arg.x, arg.p, arg.k) {
+    x &lt;- arg.x
+    p &lt;- arg.p
+    k &lt;- arg.k
+    # we only want to genotype data
+    x &lt;- x[, 3:ncol(x)]
+    # how many loci do we have?
+    num_loci &lt;- ncol(x)
+    # empty z vector of all individuals
+    z &lt;- numeric(nrow(x))
+    # for each individual
+    for (xi in 1:length(z)) {
+        # for each population
+        weights &lt;- numeric(k)
+        for (ki in 1:k) {
+            # for each loci
+            freqs &lt;- numeric(num_loci)
+            for (li in 1:ncol(x)) {
+                # for allele j at individual xi and loci li
+                j &lt;- x[xi, li]
+                # ignore missing data
+                if (j &gt; 0) {
+                  # allele 14 does not exist
+                  if (j &gt; 13) {
+                    freqs[li] &lt;- p[[ki]][j - 1, li]
+                  } else {
+                    freqs[li] &lt;- p[[ki]][j, li]
+                  }
+                }
+            }
+            # log them to avoid working with small numbers
+            weights[ki] &lt;- sum(mylog(freqs))
+        }
+        # normalize the exponentiated weights
+        theta &lt;- normalize(exp(weights))
+        # draw a population sample
+        z[xi] &lt;- sample(x = 1:k, size = 1, replace = T, prob = theta)
+    }
+    return(z)
+}
+
+#&#39; @param arg.x input data
+#&#39; @param arg.z vector of length nrow(arg.x)
+#&#39; @param arg.k number of populations
+#&#39; @return a k-length list of j alleles by l loci matrices 
+sample_p1 &lt;- function(arg.x, arg.z, arg.k) {
+    # don&#39;t get confused by arguments
+    x &lt;- arg.x
+    z &lt;- arg.z
+    k &lt;- arg.k
+    # we only want to genotype data
+    x &lt;- x[, 3:ncol(x)]
+    # what alleles exist in our data set?
+    alleles &lt;- as.integer(names(table(unlist(x))))
+    # first allele will be -9 which in this data set is missing data
+    alleles &lt;- alleles[-1]
+    # convert to tibble for easy joining
+    allele_counts &lt;- tibble::tibble(allele = alleles)
+    # p is a k length list of matrices
+    p &lt;- vector(&quot;list&quot;, k)
+    # how many loci in our data?
+    num_loci &lt;- ncol(x)
+    # for each population k_i
+    for (ki in 1:k) {
+        # what individuals are in population k_i?  take only columns 3 to the end
+        ink &lt;- x[z == ki, ]
+        # initialize matrix for k_i
+        p[[ki]] &lt;- matrix(0, nrow = nrow(allele_counts), ncol = num_loci)
+        # for each locus l_i
+        for (li in 1:num_loci) {
+            # count the number of each allele
+            ti &lt;- tibble::as_tibble(table(ink[li]))
+            # merge to create count of all alleles
+            colnames(ti) &lt;- c(&quot;allele&quot;, &quot;count&quot;)
+            ti$allele &lt;- as.integer(ti$allele)
+            loci_counts &lt;- dplyr::full_join(allele_counts, ti, by = &quot;allele&quot;)
+            loci_counts &lt;- dplyr::filter(loci_counts, allele != -9)
+            loci_counts$count &lt;- ifelse(is.na(loci_counts$count), 0, loci_counts$count)
+            # sample p_lkj as Dirichlet
+            p[[ki]][, li] &lt;- gtools::rdirichlet(n = 1, alpha = 1 + loci_counts$count)[1, 
+                ]
+        }
+    }
+    return(p)
+}</code></pre>
+<p>Next we’ll write the gibbs sampler itself:</p>
+<pre class="r"><code># Gibbs sampler function
+
+gibbs1 &lt;- function(arg.niter = 1000, arg.x, arg.k) {
+    
+    niter &lt;- arg.niter
+    x &lt;- arg.x
+    k &lt;- arg.k
+    
+    # we don&#39;t care about the first two columns
+    x &lt;- x[, 3:ncol(x)]
+    
+    # how many alleles in our data set?
+    alleles &lt;- as.integer(names(table(unlist(x))))
+    num_alleles &lt;- length(alleles)
+    
+    # how many loci?
+    num_loci &lt;- ncol(x)
+    
+    # resulting matrix should have z&#39;s for each individual
+    res &lt;- list(z = matrix(0, nrow = niter, ncol = nrow(x)))
+    
+    # initialize
+    z &lt;- sample(x = 1:k, size = nrow(x), replace = T, prob = rep(1/k, k))
+    res$z[1, ] &lt;- z
+    
+    # update
+    for (i in 2:niter) {
+        p &lt;- sample_p1(x, z, k)
+        z &lt;- sample_z1(x, p, k)
+        res$z[i, ] &lt;- z
+    }
+    return(res)
+}</code></pre>
+</div>
+<div id="tests" class="section level3">
+<h3>Tests</h3>
+<p>Just running this to test that the functions return what’s expected:</p>
+<pre class="r"><code>num_individuals &lt;- nrow(dat)
+
+# initialize
+k.test &lt;- 3
+z.test &lt;- sample(x = 1:k.test, size = num_individuals, replace = T, prob = rep(1/k.test, 
+    k.test))
+
+# run
+p.test &lt;- sample_p1(dat, z.test, k.test)
+sample_z1(dat, p.test, k.test)</code></pre>
+<pre><code>  [1] 1 2 1 3 1 2 1 1 1 1 1 3 3 1 1 2 2 3 2 2 1 1 1 3 3 2 2 2 1 2 1 1 3 1 1
+ [36] 2 1 2 1 3 2 3 2 2 1 3 2 1 1 2 2 2 2 2 2 3 2 2 1 2 1 3 1 1 1 3 2 2 1 1
+ [71] 1 3 1 2 3 3 2 3 1 1 1 3 1 1 2 2 2 3 1 1 2 1 3 1 3 1 1 3 1 2
+ [ reached getOption(&quot;max.print&quot;) -- omitted 210 entries ]</code></pre>
+</div>
+<div id="results" class="section level3">
+<h3>Results</h3>
+<p>For the results we’ll want to generate a structure plot. We can write a function for that:</p>
+<pre class="r"><code>structure_plot &lt;- function(res, k) {
+    
+    # remove burn-in make sure samples are not correlated
+    ti &lt;- tibble::as_tibble(t(res$z))
+    ti &lt;- ti[, 1001:10000]
+    ti &lt;- ti[, c(1, seq(100, 9000, 100))]
+    
+    # reformat to get a data structure that&#39;s easier to work with and plot
+    colnames(ti) &lt;- 1:91
+    ti$ind &lt;- 1:nrow(ti)
+    
+    ti &lt;- ti %&gt;% tidyr::gather(obs, pop, -ind) %&gt;% dplyr::mutate(pop = as.character(pop)) %&gt;% 
+        dplyr::group_by(ind, pop) %&gt;% dplyr::summarise(n = n())
+    
+    # order by number of counts in population 1
+    f &lt;- ti %&gt;% dplyr::arrange(pop, desc(n)) %&gt;% dplyr::filter(pop == &quot;1&quot;) %$% 
+        ind
+    ti$ind &lt;- factor(ti$ind, levels = f)
+    
+    ggplot(ti, aes(x = ind, y = n, fill = pop)) + geom_bar(colour = &quot;black&quot;, 
+        size = 0.1, stat = &quot;identity&quot;) + theme_void() + theme(legend.position = &quot;top&quot;)
+}</code></pre>
+<p>Now let’s run the simulation and view the results:</p>
+<pre class="r"><code>niter &lt;- 10000
+k &lt;- 3
+
+res &lt;- gibbs1(arg.niter = niter, arg.x = dat, arg.k = k)
+
+structure_plot(res, k)</code></pre>
+<p>I already ran the model before compiling this document so let’s just load the results here and plot them:</p>
+<pre class="r"><code>res &lt;- readRDS(&quot;../output/hw5/res_without_admixture.rds&quot;)
+structure_plot(res)</code></pre>
+<p><img src="figure/hw5.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="structure-model-with-admixture" class="section level2">
+<h2>Structure model with admixture</h2>
+<p>In order to include admixture in our model, two things change:</p>
+<p>We now include a vector <span class="math inline">\(Q\)</span> which will represent the proportion of invidiaul <span class="math inline">\(i\)</span>’s genome that originated from population <span class="math inline">\(k\)</span>. We also need to change our assumption for <span class="math inline">\(z\)</span>, which was that each individual originated in some population <span class="math inline">\(k\)</span>. Our <span class="math inline">\(Z\)</span> now becomes an <span class="math inline">\(I\)</span> by <span class="math inline">\(L\)</span> matrix corresponding to the population of origin of allele copy <span class="math inline">\(j\)</span> at locus <span class="math inline">\(l\)</span> in individual <span class="math inline">\(i\)</span>. An allele copy in diffferent individuals will always have the same population of origin.</p>
+<div id="functions-1" class="section level3">
+<h3>Functions</h3>
+<pre class="r"><code># Update functions
+
+#&#39; @param arg.x input data 
+#&#39; @param arg.p p_klj list of length k of j by l matrices of allele frequencies per locus per population
+#&#39; @param arg.k number of populations
+#&#39; @param arg.q admixture proportions for individuals
+#&#39; @return i by l matrix of allele population origins
+sample_z2 &lt;- function(arg.x, arg.p, arg.k, arg.q) {
+    
+    # don&#39;t get confused by arguments
+    x &lt;- arg.x
+    p &lt;- arg.p
+    k &lt;- arg.k
+    
+    # we only want to genotype data
+    x &lt;- x[, 3:ncol(x)]
+    
+    # how many loci do we have?
+    num_loci &lt;- ncol(x)
+    
+    # how many individuals?
+    num_indi &lt;- nrow(x)
+    
+    # what alleles exist in our data set?
+    alleles &lt;- as.integer(names(table(unlist(x))))
+    
+    # first allele will be -9 which in this data set is missing data
+    alleles &lt;- alleles[-1]
+    
+    # how many alleles do we have?
+    num_alleles &lt;- length(alleles)
+    
+    # empty i by l matrix of allele copy origins
+    z &lt;- numeric(num_alleles)
+    
+    
+    ############################################################################## EDIT THESE LOOPS!!!!
+    
+    # for each allele
+    for (ji in 1:num_alleles) {
+        
+        # initialize k length weights vector
+        weights &lt;- numeric(k)
+        
+        # for each population
+        for (ki in 1:k) {
+            
+            # what alleles originated in population ki?
+            alleles_ink &lt;- which(z %in% ki)
+            
+            # for each individial
+            for (xi in 1:num_indi) {
+                
+                # we want the loci at which individual xi carries alleles within population
+                # ki
+                loci_ink &lt;- which(x[xi, ] %in% ink)
+                
+                # initialize vector of length num_loci
+                freqs &lt;- numeric(num_loci)
+                
+                # for each allele in population ki
+                for (index in 1:length(alleles_ink)) {
+                  
+                  # extract allele frequencies for allele alleles_ink and loci loci_ink and
+                  # multiply those frequencies by the admixture proportions for individual xi
+                  # in population ki
+                  freqs[xi, ] &lt;- p[[ki]][alleles_ink[index], loci_ink[index]] * 
+                    q[xi, ki]
+                  
+                }  # end for alleles_ink
+                
+                # log them to avoid working with small numbers
+                weights[ki] &lt;- sum(mylog(freqs))
+                
+            }  # end for individual xi
+            
+        }  # end for population ki
+        
+        # normalize the exponentiated weights
+        theta &lt;- normalize(exp(weights))
+        
+        # draw a population sample
+        z[ji] &lt;- sample(x = 1:k, size = 1, replace = T, prob = theta)
+        
+        ############################################################################## 
+        
+        
+    }  # end for allele ji  
+    
+    return(z)
+    
+}
+
+#&#39; @param arg.x input data
+#&#39; @param arg.z vector of length j
+#&#39; @param arg.k number of populations
+#&#39; @return a k-length list of j alleles by l loci matrices 
+sample_p2 &lt;- function(arg.x, arg.z, arg.k) {
+    
+    # don&#39;t get confused by arguments
+    x &lt;- arg.x
+    z &lt;- arg.z
+    k &lt;- arg.k
+    
+    # we only want to genotype data
+    x &lt;- x[, 3:ncol(x)]
+    
+    # what alleles exist in our data set?
+    alleles &lt;- as.integer(names(table(unlist(x))))
+    
+    # first allele will be -9 which in this data set is missing data
+    alleles &lt;- alleles[-1]
+    
+    # convert to tibble for easy joining
+    allele_counts &lt;- tibble::tibble(allele = alleles)
+    
+    # p is a k length list of matrices
+    p &lt;- vector(&quot;list&quot;, k)
+    
+    # how many loci in our data?
+    num_loci &lt;- ncol(x)
+    
+    # for each population k_i
+    for (ki in 1:k) {
+        
+        # what alleles originated in population ki
+        ink &lt;- which(z %in% ki)
+        
+        # initialize matrix for ki
+        p[[ki]] &lt;- matrix(0, nrow = nrow(allele_counts), ncol = num_loci)
+        
+        # for each locus li
+        for (li in 1:num_loci) {
+            
+            # what individuals have those alleles at locus li and are those alleles
+            ind &lt;- x[x[, li] %in% ink, ][, li]
+            
+            # count the number of individuals with those alleles
+            ti &lt;- tibble::as_tibble(table(ind))
+            
+            # merge to create count of all individuals with those alleles
+            colnames(ti) &lt;- c(&quot;allele&quot;, &quot;count&quot;)
+            ti$allele &lt;- as.integer(ti$allele)
+            loci_counts &lt;- dplyr::full_join(allele_counts, ti, by = &quot;allele&quot;)
+            loci_counts &lt;- dplyr::filter(loci_counts, allele != -9)
+            loci_counts$count &lt;- ifelse(is.na(loci_counts$count), 0, loci_counts$count)
+            
+            # sample allele frequencies at each locus
+            p[[ki]][, li] &lt;- gtools::rdirichlet(n = 1, alpha = loci_counts$count)[1, 
+                ]
+            
+        }
+        
+    }
+    
+    return(p)
+}
+
+#&#39; @param arg.x input data
+#&#39; @param arg.z j length vector of population origins
+#&#39; @param arg.k number of clusters
+#&#39; @return i by k matrix of admixture proportions
+sample_q2 &lt;- function(arg.x, arg.z, arg.k, arg.alpha) {
+    
+    # don&#39;t get confused by arguments
+    x &lt;- arg.x
+    z &lt;- arg.z
+    k &lt;- arg.k
+    alpha &lt;- arg.alpha
+    
+    # we only want to genotype data
+    x &lt;- x[, 3:ncol(x)]
+    
+    # how many individuals?
+    num_indi &lt;- nrow(x)
+    
+    # initialize i by k matrix
+    q &lt;- matrix(0, nrow = num_indi, ncol = k)
+    
+    # for each individual
+    for (xi in 1:num_indi) {
+        
+        # k length vector of allele counts per population
+        counts &lt;- numeric(k)
+        
+        # for each population
+        for (ki in 1:k) {
+            
+            # what alleles originated in population ki
+            ink &lt;- which(z %in% ki)
+            
+            # how many of those alleles does individual xi have
+            counts[ki] &lt;- sum(x[xi, ] %in% ink)
+            
+        }
+        
+        # sample mixture proportions for each individual
+        q[xi, ] &lt;- gtools::rdirichlet(n = 1, alpha = alpha + counts)[1, ]
+        
+    }
+    
+    return(q)
+    
+}
+
+update_alpha &lt;- function(arg.alpha) {
+    
+    # don&#39;t get confused by arguments
+    alpha &lt;- arg.alpha
+    
+    return(alpha_prime)
+    
+}</code></pre>
+<p>Next we’ll write the gibbs sampler itself:</p>
+<pre class="r"><code>gibbs2 &lt;- function(arg.niter = 1000, arg.x, arg.k) {
+    
+    niter &lt;- arg.niter
+    x &lt;- arg.x
+    k &lt;- arg.k
+    
+    # we don&#39;t care about the first two columns
+    x &lt;- x[, 3:ncol(x)]
+    
+    # how many alleles in our data set?
+    alleles &lt;- as.integer(names(table(unlist(x))))
+    num_alleles &lt;- length(alleles)
+    
+    # how many loci?
+    num_loci &lt;- ncol(x)
+    
+    # resulting matrix should have z&#39;s for each individual
+    res &lt;- list(z = matrix(0, nrow = niter, ncol = nrow(x)))
+    
+    # initialize
+    z &lt;- sample(x = 1:k, size = nrow(x), replace = T, prob = rep(1/k, k))
+    res$z[1, ] &lt;- z
+    
+    # update
+    for (i in 2:niter) {
+        p &lt;- sample_p1(x, z, k)
+        z &lt;- sample_z1(x, p, k)
+        res$z[i, ] &lt;- z
+    }
+    return(res)
+}</code></pre>
+</div>
+<div id="tests-1" class="section level3">
+<h3>Tests</h3>
+<p>Just running this to test that the functions return what’s expected:</p>
+<pre class="r"><code>num_individuals &lt;- nrow(dat)
+
+# initialize
+k.test &lt;- 3
+z.test &lt;- sample(x = 1:k.test, size = num_individuals, replace = T, prob = rep(1/k.test, 
+    k.test))
+
+# run
+p.test &lt;- sample_p2(dat, z.test, k.test)
+sample_z2(dat, p.test, k.test)</code></pre>
+</div>
+<div id="results-1" class="section level3">
+<h3>Results</h3>
+</div>
+</div>
+<div id="session-information" class="section level2">
+<h2>Session Information</h2>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.3.2 (2016-10-31)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: Gentoo/Linux
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] gtools_3.5.0  tibble_1.2    cowplot_0.7.0 ggplot2_2.2.1 magrittr_1.5 
+[6] dplyr_0.5.0   tidyr_0.6.1  
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_0.12.9      knitr_1.15.1     workflowr_0.3.0  munsell_0.4.3   
+ [5] colorspace_1.3-2 R6_2.2.0         highr_0.6        stringr_1.2.0   
+ [9] plyr_1.8.4       tools_3.3.2      grid_3.3.2       gtable_0.2.0    
+[13] DBI_0.6          git2r_0.18.0     htmltools_0.3.5  lazyeval_0.2.0  
+[17] yaml_2.1.14      rprojroot_1.2    digest_0.6.12    assertthat_0.1  
+[21] formatR_1.4      evaluate_0.10    rmarkdown_1.3    labeling_0.3    
+[25] stringi_1.1.2    scales_0.4.1     backports_1.0.5 </code></pre>
+</div>
+
+<hr>
+<p>
+    This site was created with <a href="http://rmarkdown.rstudio.com">R Markdown</a>
+</p>
+<hr>
+
+<!-- To enable disqus, uncomment the section below and provide your disqus_shortname -->
+
+<!-- disqus
+  <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'rmarkdown'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+-->
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

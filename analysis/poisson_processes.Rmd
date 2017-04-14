@@ -1,0 +1,112 @@
+---
+title: "Poisson Processes"
+author: "John Novembre"
+date: 2017-02-07
+output: html_document
+---
+
+```{r read-chunk, include=FALSE, cache=FALSE}
+knitr::read_chunk("chunks.R")
+```
+
+```{r knitr-opts-chunk, include=FALSE}
+```
+
+**Last updated:** `r Sys.Date()`
+
+**Code version:** `r workflowr::extract_commit(".", 1)$sha1`
+
+## Introduction to Poisson Processes
+
+
+
+## Lecture
+
+$${X_{t}, t=0,1,2,...}$$
+
+$${X(t), t>0}$$
+
+### Counting processes
+
+1. $N(0) = 0$
+2. if $s < t$ $N(s) < N(t)$
+3. If $N(t)>0$ then $t>=0$
+4. $N(t) - N(s) = x$ & $t>s$ then x is the # of arrivals in $(s,t)$
+
+$N(t)$ represents the number of arrivals between $s$ and $t$
+
+Some distribution of waiting times. $X_{1}...X_{n}$ are random variables representing the number of arrivals between two time points. $X_{i}$ ~ $Exp(\lambda)$.
+
+Special case: waiting time has the memoryless property
+
+$P(X>s+t|X>t)=P(X>s)$
+
+The exponential distribution meets this condition.
+
+$$f(t) = \lambda e^{-\lambda t}$$
+
+$$P(X>t) = e^{-\lambda t}$$
+
+The geometric distribution is the discrete analog to the continuous exponential.
+
+$$P(T=t)=(1-p)^{t_{i}-1}p$$
+
+Examples of counting processes in biology:
+
+* number of births in a population
+* number of mutations along a branch of an evolutionary tree
+* marching along a chromosome and counting the number of recombination events along a certain distance
+
+Queing theory - application to how long lines are (number of customers in a line)
+
+_Properties_
+
+**Stationary increments** - $P(N(s+t) - N(t))$ does not depend on t
+**Independent increments** - similar to the memoryless property
+
+A counting process with stationary and independent increments is a poisson process. A result is that the number of events per interval are exponentially distributed. There are processes that don't satsify the stationary increments property where the distribution of arrivals within an interval of time is not exponentially distributed.
+
+Probability uses little "o" notation. Function $f(x)$ is $o(g(x))$ if $\underset{x \rightarrow \inf}{lim} \frac{f(t)}{g(x)} = 0$
+
+### Axioms of the Poisson Process
+
+* $N(0) = 0$
+* $N(t), t \gteq 0$  (independent increments)
+* $P(N(t+h)-N(t)=2)=o(h)$
+* $P(N(t+h)-N(t)=1)=\lambda h + o(h)$
+
+This gives us $N(t)$ ~ $Pois(\lambda t)$
+
+$\lambda$ is the instantaneous rate of events occuring within a time inverval.
+
+Useful to think of this as the limit of a Bernoulli Process.
+
+If we make an interval starting at $s$ and ending at $s+t$ and divide that into $n$ segments, then we have the # of events within each interval $i$ as $N_{i}$.
+
+$$P(N_{i}>=2)=o(\frac{t}{n})$$
+$$P(N_{i}=1)=\lambda (\frac{t}{n}) + o(\frac{t}{n}$$
+
+Then $N_{i}$ ~ $Bernoulli(\lambda(\frac{t}{n})$. 
+
+The sum of of a bunch of Bernoulli random variables is distributed $Binomial(n,p)$. The limit as $n$ approaches infinity of a Binomial random variable, $np$ approaches some $c$, and $X$ is distributed $Pois(c)$.
+
+$$P(X_{1}>t) = P(N(t)=0) = e^{-\lambda t}$$ 
+
+$X_{2}$ ~ $Exp(\lambda)$. 
+
+What about the total wait time to the nth event?
+
+$$S_{n} = \sum_{j=1}^{n} x_{j}$$
+
+Where $S_{n}$ is the total wait time to the nth event, then $S_{n}$ ~ $Gamma(\lambda,n)$.
+
+Probability of an event happening at some point within a time interval is uniform within a Poisson process.
+
+If $N_{1}(t)$ is P.P. with $\lambda_{1}$ and $N_{2}(t)$ is P.P. $\lambda_{2}$, then $N(t)$ is P.P. $\lambda = \lambda_{1} + \lambda_{2}$. That is, Poisson Processes can be super-imposed onto one another.
+
+$$Prob(event_{i}) = \frac{\lambda_{i}}{\sum_{j=1}^{k} \lambda_{j}}$$
+
+Can use this to determine the probability of a certain event being an event of type $i$ within a super-imposed process of Pooisson Processes.
+
+P.P. with $\lambda$ and arrivals are assigned a type $i$ w/ prob $p_{i}$, then $N_{i}(t)$ ~ P.P. $\lambda p_{i}$
+

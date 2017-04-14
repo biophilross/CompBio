@@ -2,11 +2,11 @@
 title: "HW3"
 author: "Philipp Ross"
 date: '2017-24-01'
-output: pdf_document
+output: html_document
 ---
 
 ```{r read-chunk, include=FALSE, cache=FALSE}
-knitr::read_chunk("analysis/chunks.R")
+knitr::read_chunk("chunks.R")
 library(statnet)
 ```
 
@@ -247,11 +247,11 @@ sum(successes)/length(successes)
 
 ### Maximum likelihood estimation for a Markov transition matrix
 
-Not sure where we were supposed to get the data for this one so I'll generate it myself?
+Prepare the data:
 
 ```{r}
-# simulated binary observations
-m <- rbinom(1000,size=1,prob=0.3)
+x <- read.table("../data/hw3/Test_region_NOM37_methylation_C_in_GpC_hg38_chr9_131946471_134832670.bed",stringsAsFactors=FALSE,header=FALSE)
+m <- 1*(x$V7>0)
 ```
 
 First we want to fit a Bernoulli model to the data: 

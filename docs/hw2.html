@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Philipp Ross" />
+
+<meta name="date" content="2017-01-17" />
+
+<title>HW2</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 54px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+
+.section h2 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h3 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h4 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h5 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h6 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = false;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Fundamentals of Computational Biology</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/jdblischak/workflowr">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">HW2</h1>
+<h4 class="author"><em>Philipp Ross</em></h4>
+<h4 class="date"><em>2017-01-17</em></h4>
+
+</div>
+
+
+<p><strong>Last updated:</strong> 2017-04-10</p>
+<p><strong>Code version:</strong> e75cac0</p>
+<div id="a.-likelihood-inference" class="section level2">
+<h2>A. Likelihood Inference</h2>
+<div id="exercise-1" class="section level3">
+<h3>Exercise 1</h3>
+<p>For this problem, my intuition says that I should believe he rolled the blue die. To state this formally we have our data represented by which numbers were actually rolled and our models represented by the probability of rolling those numbers given the blue or green die.</p>
+<p>We can represent our data as a vector of frequencies for having rolled the numbers one through six and our models as probability vectors for rolling those numbers based on the sides of each die.</p>
+<pre class="r"><code>x &lt;- c(1, 2, 6, 1, 0, 0)  # data
+fB &lt;- c(1/6, 1/6, 1/2, 1/6, 0, 0)  # blue dice model
+fG &lt;- c(1/6, 1/3, 1/6, 1/3, 0, 0)  # green dice model
+
+#&#39; Likelihood function
+#&#39;
+#&#39; @param f vector of probabilities of success
+#&#39; @param x vector of successes and failures
+#&#39;
+calculate_likelihood &lt;- function(f, x) {
+    prod(f^x * (1 - f)^(1 - x))
+}
+
+LR &lt;- calculate_likelihood(fB, x)/calculate_likelihood(fG, x)  # likelihood ratio
+print(LR)</code></pre>
+<pre><code>[1] 937.5</code></pre>
+<p>We can see that our intuition was right! The chances of having rolled the blue die are 937.5 times more likely than having rolled the green die to generate those data.</p>
+</div>
+<div id="exercise-2" class="section level3">
+<h3>Exercise 2</h3>
+<p><strong>(a)</strong></p>
+<p>Below is the code for running simulations:</p>
+<pre class="r"><code>#&#39; Simluate tusks
+#&#39;
+#&#39; Simulates genotype data of elephant tusks using a multinomial model
+#&#39;
+#&#39; @param nS number of savanna tusks to use
+#&#39; @param nF number of forest tusks to use
+#&#39; @param fS allele frequencies of savanna elephants
+#&#39; @param fF allele frequencies of forest elephants
+#&#39;
+#&#39; @return list of simulated tusks
+#&#39;
+#&#39; @example simulate_tusks(1000, 1000, c(0.40,0.12,0.21,0.12,0.02,0.32), c(0.8,0.2,0.11,0.17,0.23,0.25))
+#&#39;
+#&#39;
+simulate_tusks &lt;- function(nS, nF, fS, fF) {
+    
+    sS &lt;- replicate(nS, sapply(fS, function(x) {
+        sample(c(1, 0), 1, prob = c(x, 1 - x), replace = TRUE)
+    }))
+    sF &lt;- replicate(nF, sapply(fF, function(x) {
+        sample(c(1, 0), 1, prob = c(x, 1 - x), replace = TRUE)
+    }))
+    
+    return(list(S = sS, F = sF))
+    
+}
+
+#&#39; Compute misclassification rates
+#&#39;
+#&#39; Using a vector of log10 threshold values, calculate the rate of misclassification
+#&#39;
+#&#39; @param lr likelihood ratios computed for tusks
+#&#39; @param lc vector of log10(c) values of LR cutoff to us
+#&#39;
+#&#39; @return list of lists of simulated tusks
+#&#39;
+#&#39; @example compute_misclassification_rate(data, seq(-2,2,length=100))
+#&#39;
+#&#39;
+compute_misclassification_rate &lt;- function(lr, lc) {
+    
+    l1 &lt;- unlist(lapply(lc, function(c) {
+        sum(log10(lr$S) &lt;= c)
+    }))  # incorrectly classified as Savanna elephants
+    l2 &lt;- unlist(lapply(lc, function(c) {
+        sum(log10(lr$F) &gt; c)
+    }))  # incorrectly classified as Forest elephants
+    
+    rates &lt;- (l1 + l2)/(length(lr$S) + length(lr$F))
+    
+    return(rates)
+    
+}
+
+#&#39; Run Simulation
+#&#39;
+#&#39; Simulates data from forest and savanna tusks from prespecified frequencies, and uses LR to classify them.
+#&#39;
+#&#39; @param nS number of savanna tusks to use
+#&#39; @param nF number of forest tusks to use
+#&#39; @param fS allele frequencies of savanna elephants
+#&#39; @param fF allele frequencies of forest elephants
+#&#39; @param lc vector of log(c) values of LR cutoff to use
+#&#39;
+#&#39; @return Miscalculation rates based on cutoffs
+#&#39;
+#&#39; @example run_simulation(1000, 1000, c(0.40,0.12,0.21,0.12,0.02,0.32), c(0.8,0.2,0.11,0.17,0.23,0.25), seq(-2,2,length=100))
+#&#39;
+#&#39;
+run_simulation &lt;- function(nS, nF, fS, fF, lc) {
+    
+    # simulate tusks
+    data &lt;- simulate_tusks(nS, nF, fS, fF)
+    
+    # compute likelihood ratios
+    LRS &lt;- apply(data$S, 2, function(x) {
+        calculate_likelihood(fS, x)
+    })/apply(data$S, 2, function(x) {
+        calculate_likelihood(fF, x)
+    })
+    LRF &lt;- apply(data$F, 2, function(x) {
+        calculate_likelihood(fS, x)
+    })/apply(data$F, 2, function(x) {
+        calculate_likelihood(fF, x)
+    })
+    
+    # compute misclassification rate
+    rates &lt;- compute_misclassification_rate(lr = list(S = LRS, F = LRF), lc)
+    
+    return(rates)
+}</code></pre>
+<p>When we run the simulation for 1000 Savanna elephant tusks and 1000 Forest elephant tusks:</p>
+<pre class="r"><code>seed &lt;- 37
+nS &lt;- 1000
+nF &lt;- 1000
+fS &lt;- c(0.4, 0.12, 0.21, 0.12, 0.02, 0.32)
+fF &lt;- c(0.8, 0.2, 0.11, 0.17, 0.23, 0.25)
+lc &lt;- seq(-2, 2, length = 100)
+
+set.seed(seed)
+
+results &lt;- run_simulation(nS, nF, fS, fF, lc)
+plot(seq(-2, 2, length = 100), results, type = &quot;l&quot;, main = &quot;Misclassification Rate&quot;, 
+    xlab = &quot;Log10(c)&quot;, ylab = &quot;Rate&quot;)</code></pre>
+<p><img src="figure/hw2.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>We can see that the value of c that minimizes our misclassification rate is 1.2618569.</p>
+<p><strong>(b)</strong></p>
+<p>When we run the simulation for 100 Savanna elephant tusks and 1900 Forest elephant tusks:</p>
+<pre class="r"><code>nS &lt;- 100
+nF &lt;- 1900
+fS &lt;- c(0.4, 0.12, 0.21, 0.12, 0.02, 0.32)
+fF &lt;- c(0.8, 0.2, 0.11, 0.17, 0.23, 0.25)
+lc &lt;- seq(-2, 2, length = 100)
+
+set.seed(seed)
+
+results &lt;- run_simulation(nS, nF, fS, fF, lc)
+plot(seq(-2, 2, length = 100), results, type = &quot;l&quot;, main = &quot;Misclassification Rate&quot;, 
+    xlab = &quot;Log10(c)&quot;, ylab = &quot;Rate&quot;)</code></pre>
+<p><img src="figure/hw2.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>We can see that the value of c that minimizes our misclassification rate is 11.7681195.</p>
+</div>
+<div id="exercise-3" class="section level3">
+<h3>Exercise 3</h3>
+<p>We can modify the tusk example by including a bernoulli random variable with a chance of success of 0.98. This can be added to the code as it is below using the <code>rbinom()</code> function.</p>
+<pre class="r"><code>x &lt;- c(1, 0, 1, 0, 0, 1)
+x &lt;- sapply(x, function(x) {
+    ifelse(rbinom(1, 1, 0.98) == 1, x, 1 - x)
+})
+fS &lt;- c(0.4, 0.12, 0.21, 0.12, 0.02, 0.32)
+fF &lt;- c(0.8, 0.2, 0.11, 0.17, 0.23, 0.25)
+LR &lt;- calculate_likelihood(fS, x)/calculate_likelihood(fF, x)
+print(LR)</code></pre>
+<pre><code>[1] 1.81359</code></pre>
+</div>
+</div>
+<div id="b.-mixture-models" class="section level2">
+<h2>B. Mixture Models</h2>
+<div id="introductino-to-mixture-models" class="section level3">
+<h3>Introductino to Mixture Models</h3>
+<p>Suppose that we receive a data set of adult, human heights. We don’t know what kinds of humans, exactly, but we know that they are adults. The first thing we might want to do is explore and describe our data. Now suppose our data looks like this:</p>
+<p><img src="figure/hw2.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Based on what we know about the distribution of adult, human heights we might have expected it to look like a gaussian distribution, but here we clearly see what looks like two normal distributions next to one another. What would be the expected height if we simply calculated the mean of all of our data? Let’s create another plot with the mean highlighted in red:</p>
+<p><img src="figure/hw2.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Does this make sense?</p>
+<p>Calculating the mean in this way assumes that the data comes from a unimodal distribution, but we can clearly see here that we have what’s called a <strong>multimodal</strong> distribution. We can imagine how this might be the case if we consider the fact that women are, on average, shorter than men. Thus, it could be that the data we received contained heights that weren’t gender biased. That is, the data contains the heights recorded from both men and women. In other words, our the data was actually sampled from a population that can more accurately be described by separating it into a distinct number of subpopulations. In this case, 2; one for males and one for females.</p>
+<p>In order to model this, we use what’s called a <strong>mixture model</strong> where we assume that the to modes within our data represent data that was sampled from two independent distributions.</p>
+<p>We can represent the probability of heights using the following equation:</p>
+<p><span class="math display">\[
+P(X_{i} = x) = \sum_{k=1}^{K}P(X_{i} = x|Z_{i} = k)P(Z_{i} = k) = \sum_{k=1}^{K}P(X_{i}|Z_{i} = k)\pi_{k}
+\]</span></p>
+<p>Where <span class="math inline">\(Z_{i}\)</span> is the latent variable that provides the category (male or female here) for our recorded data point and <span class="math inline">\(\pi_{k}\)</span> is the proportion of the population that’s either one category or the other.</p>
+<p>Therefore the likelihood function for our model would be:</p>
+<p><span class="math display">\[
+L(\pi) = \prod_{i=1}^{n}P(X_{i}|\pi) = \prod_{i=1}^{n}\sum_{k=1}^{K}P(X_{i}|Z_{i} = k)\pi_{k}
+\]</span></p>
+</div>
+<div id="simulating-from-mixtures-and-computing-log-likelihoods" class="section level3">
+<h3>Simulating from mixtures and computing log-likelihoods</h3>
+<p><strong>(a)</strong></p>
+<p>An R function to simulate genetic data for tusks:</p>
+<pre class="r"><code>#&#39; Simulate tusks from a mixture distribution
+#&#39;
+#&#39; @param N number of tusks to simulate
+#&#39; @param w vector of mixture proportions of length K that sums to 1
+#&#39; @param F K by M matrix of allele frequencies, where M is the number of markers
+#&#39;
+#&#39; @return list containing an N by M matrix of data and an N vector of component memberships
+#&#39;
+#&#39; @example sim_mixture_tusks(10,c(0.4,0.6),matrix(c(0.40,0.12,0.21,0.12,0.02,0.32,0.8,0.2,0.11,0.17,0.23,0.25),ncol=2))
+#&#39;
+#&#39;
+sim_mixture_tusks &lt;- function(N, w, F) {
+    # intialize memberships vector
+    memberships &lt;- numeric(N)
+    # initialize output data matrix
+    data &lt;- matrix(0, nrow = N, ncol = nrow(F))
+    # for the number of samples...
+    for (i in 1:N) {
+        # which category are we randomly choosing based on our mixture proportions
+        z &lt;- which.max(rmultinom(n = 1, size = 1, prob = w))
+        memberships[i] &lt;- z
+        # generate identifier for individual markers
+        data[i, ] &lt;- sapply(F[, z], function(x) {
+            sample(c(1, 0), 1, prob = c(x, 1 - x))
+        })
+    }
+    return(list(X = data, Z = memberships))
+}</code></pre>
+<p><strong>(b)</strong></p>
+<p>An R function to compute the log-likelihood for the simulated data set:</p>
+<pre class="r"><code>#&#39; Calculate the log-likelihood of a data matrix
+#&#39;
+#&#39; @param X N by M matrix of N samples by M genetic markers
+#&#39; @param w vector of mixture proportions of length K that sums to 1
+#&#39; @param F K by M matrix of allele frequencies, where M is the number of markers
+#&#39;
+#&#39; @return log-likelihood under the model for our data set
+#&#39;
+#&#39; @example calculate_log_likelihood(X,c(0.4,0.6),matrix(c(0.40,0.12,0.21,0.12,0.02,0.32,0.8,0.2,0.11,0.17,0.23,0.25),ncol=2))
+#&#39;
+calculate_log_likelihood &lt;- function(X, w, F) {
+    # s is the log-likelihood for each row
+    s &lt;- apply(X, 1, function(x) {
+        # 
+        v &lt;- numeric(length(w))
+        for (k in 1:length(w)) {
+            v[k] &lt;- calculate_likelihood(F[, k], x) * w[k]
+        }
+        sum(v)
+    })
+    return(sum(log(s)))
+}</code></pre>
+<p><strong>(c)</strong></p>
+<p>Now to test the functions:</p>
+<pre class="r"><code>N &lt;- 1000
+w &lt;- c(0.25, 0.75)
+F &lt;- matrix(c(0.4, 0.12, 0.21, 0.12, 0.02, 0.32, 0.8, 0.2, 0.11, 0.17, 0.23, 
+    0.25), ncol = 2)
+
+set.seed(seed)
+
+data &lt;- sim_mixture_tusks(N, w, F)
+calculate_log_likelihood(data$X, w, F)</code></pre>
+<pre><code>[1] -2894.828</code></pre>
+<p>Now we can sweep through different values of our mixture proportions to see where we see the highest likelihood:</p>
+<pre class="r"><code># number of values to test
+steps &lt;- 100
+# vector of mixture proportions
+wl &lt;- seq(0.01, 1, length = steps)
+# log-likelihoods for each mixture proportion
+lls &lt;- sapply(wl, function(x) {
+    w &lt;- c(x, 1 - x)
+    calculate_log_likelihood(data$X, w, F)
+})
+# plot the results along with the maximum likelihood
+plot(wl, lls, type = &quot;l&quot;, xlim = c(0, 1), ylab = &quot;Log-Likelihood&quot;, xlab = &quot;Mixture Proportion&quot;, 
+    main = &quot;Most Likely Mixture Proportion&quot;)
+abline(v = wl[which.max(lls)], col = &quot;red&quot;)</code></pre>
+<p><img src="figure/hw2.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="em-algorithm" class="section level3">
+<h3>EM Algorithm</h3>
+<p>Instead of sweeping through every possible value of <span class="math inline">\(w\)</span>, we can use an EM algorithm to estimate the most likely mixture proportions.</p>
+<p>To do this, we first need to rewrite our function to calculate log-likelihoods:</p>
+<pre class="r"><code>#&#39; Calculate the log-likelihood of a data matrix
+#&#39;
+#&#39; @param X N by M matrix of N samples by M genetic markers
+#&#39; @param w vector of mixture proportions of length K that sums to 1
+#&#39; @param L N by K matri of likelihoods
+#&#39;
+#&#39; @return log-likelihood under the model for our data set
+#&#39;
+#&#39; @example calculate_log_likelihood2(X,c(0.4,0.6),matrix(c(0.40,0.12,0.21,0.12,0.02,0.32,0.8,0.2,0.11,0.17,0.23,0.25),ncol=2))
+#&#39;
+calculate_log_likelihood2 &lt;- function(X, w, L) {
+    # calculate the likelihoods weighted according to our current best mixture
+    # proportion
+    L[, 1] &lt;- L[, 1] * w[1]
+    L[, 2] &lt;- L[, 2] * w[2]
+    return(sum(log(rowSums(L))))
+}</code></pre>
+<p>Now we write the actual EM algorithm functions</p>
+<pre class="r"><code>#&#39; Function to run the E and M step of the EM algorithm
+#&#39; 
+#&#39; @param w_curr K length vector of mixture proportions
+#&#39; @param L N by K matrix of likelihoods
+#&#39; 
+#&#39; @return new k length vector of mixture proportions
+#&#39; 
+EM_iter &lt;- function(w_curr, L, ...) {
+    # E-step: compute E_{Z|X,w0}[I(Z_i = k)]
+    z_ik &lt;- L
+    for (i in seq_len(ncol(L))) {
+        z_ik[, i] &lt;- w_curr[i] * z_ik[, i]
+    }
+    z_ik &lt;- z_ik/rowSums(z_ik)
+    # M-step
+    w_next &lt;- colSums(z_ik)/sum(z_ik)
+    return(w_next)
+}
+
+#&#39; EM algorithm to estimate mixture proportions from a model whose components are fully known
+#&#39; 
+#&#39; @param w_init initial mixture proportions to start with
+#&#39; @param L N by K matrix of log-likelihoods of N observations by K log-likelihoods
+#&#39; @param X N by M matrix of N observations by M genetic markers
+#&#39; 
+#&#39; @return list of mixture proportions and log-likelihood at each step
+#&#39;
+mixture_EM &lt;- function(w_init, L, X) {
+    # mixture proportion to start with
+    w_curr &lt;- w_init
+    # store log-likehoods for each iteration
+    log_liks &lt;- c()
+    ll &lt;- calculate_log_likelihood2(X, w_curr, L)
+    log_liks &lt;- c(log_liks, ll)
+    delta_ll &lt;- 1
+    # run through algorithm until the difference in log-likelihood is minimal
+    while (delta_ll &gt; 1e-05) {
+        w_curr &lt;- EM_iter(w_curr, L)
+        ll &lt;- calculate_log_likelihood2(X, w_curr, L)
+        log_liks &lt;- c(log_liks, ll)
+        delta_ll &lt;- log_liks[length(log_liks)] - log_liks[length(log_liks) - 
+            1]
+    }
+    return(list(w_curr, log_liks))
+}</code></pre>
+<p>Finally, we can test to make sure the algorithm works at all:</p>
+<pre class="r"><code>L &lt;- matrix(0, nrow = length(data$X), ncol = 2)
+L[, 1] &lt;- apply(data$X, 1, function(x) calculate_likelihood(F[, 1], x))
+L[, 2] &lt;- apply(data$X, 1, function(x) calculate_likelihood(F[, 2], x))</code></pre>
+<pre class="r"><code>ee &lt;- mixture_EM(w_init = c(0.1, 0.9), L, data$X)
+print(paste(&quot;Estimate = (&quot;, round(ee[[1]][1], 2), &quot;,&quot;, round(ee[[1]][2], 2), 
+    &quot;)&quot;, sep = &quot;&quot;))</code></pre>
+<pre><code>[1] &quot;Estimate = (0.23,0.77)&quot;</code></pre>
+<p>But is the log-likelihood actually increasing at each step?</p>
+<pre class="r"><code>plot(ee[[2]], ylab = expression(l(theta)), xlab = &quot;Iteration&quot;, main = &quot;Log-likelihood&quot;)</code></pre>
+<p><img src="figure/hw2.Rmd/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>We need to run the EM algorithm several times starting from random mixture proportions to get a good estimate of the actual maximum likelihood value:</p>
+<pre class="r"><code># how many times to rerun the em algorithm
+num_iter &lt;- 100
+# values to sample from
+sample_space &lt;- seq(0.01, 1, length.out = 100)
+estimates &lt;- numeric(num_iter)
+# r
+for (i in 1:num_iter) {
+    m &lt;- sample(sample_space, size = 1)
+    w &lt;- c(m, 1 - m)
+    estimates[i] &lt;- mixture_EM(w_init = w, L, data$X)[[1]]
+}
+
+print(mean(estimates))</code></pre>
+<pre><code>[1] 0.2309053</code></pre>
+<pre class="r"><code>hist(estimates, breaks = 10, xlim = c(0, 1))</code></pre>
+<p><img src="figure/hw2.Rmd/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="session-information" class="section level2">
+<h2>Session Information</h2>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.3.2 (2016-10-31)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: Gentoo/Linux
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+loaded via a namespace (and not attached):
+ [1] backports_1.0.5 magrittr_1.5    rprojroot_1.2   formatR_1.4    
+ [5] tools_3.3.2     htmltools_0.3.5 yaml_2.1.14     Rcpp_0.12.9    
+ [9] stringi_1.1.2   rmarkdown_1.3   knitr_1.15.1    git2r_0.18.0   
+[13] stringr_1.2.0   digest_0.6.12   workflowr_0.3.0 evaluate_0.10  </code></pre>
+</div>
+
+<hr>
+<p>
+    This site was created with <a href="http://rmarkdown.rstudio.com">R Markdown</a>
+</p>
+<hr>
+
+<!-- To enable disqus, uncomment the section below and provide your disqus_shortname -->
+
+<!-- disqus
+  <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'rmarkdown'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+-->
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
