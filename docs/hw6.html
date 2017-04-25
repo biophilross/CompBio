@@ -309,8 +309,8 @@ div.tocify {
 </div>
 
 
-<p><strong>Last updated:</strong> 2017-04-12</p>
-<p><strong>Code version:</strong> e75cac0</p>
+<p><strong>Last updated:</strong> 2017-04-24</p>
+<p><strong>Code version:</strong> 2ddb127</p>
 <div id="hidden-and-continuous-time-markov-models" class="section level2">
 <h2>Hidden and continuous time markov models</h2>
 <div id="problem-1" class="section level3">
@@ -318,36 +318,183 @@ div.tocify {
 <p>The updates in the Baum- Welch (EM) algorithm depend on a few key terms listed below. For each one, show how the term can be expressed as a function of the forward and backward variables.</p>
 <p><strong>(a)</strong></p>
 <p><span class="math display">\[
-E[#t_{ij}(Q)|\lambda(t),O]
+E[\#t_{ij}(Q)|\lambda(t),O] = \sum_{t=1}^{T}\frac{\alpha_{i}(t)a[x_{i},x_j]b[x_{j},o_{t+1}]\beta_{j}(t+1)}{\sum_{i=1}^{n}\alpha_{}(T)}
 \]</span></p>
 <p><strong>(b)</strong></p>
+<p><span class="math display">\[
+E[\#o_{ij}(Q)|\lambda(t),O] = 
+\]</span></p>
 <p><strong>(c)</strong></p>
+<p><span class="math display">\[
+E[\#times\ in\ state\ i|\lambda(t), O] = n \sum_{i=1}^{n} \alpha_{i}(j) \beta_{i}(j)
+\]</span></p>
 <p><strong>(d)</strong></p>
+<p><span class="math display">\[
+P(Q_{1} =i|\lambda(t),O) = \frac{\alpha_{i}(t)\beta_{i}(t)}{\sum_{i=1}^{n}\alpha_{}(T)}
+\]</span></p>
+</div>
+<div id="problem-2" class="section level3">
+<h3>Problem 2</h3>
+<p>The opening of a new hospital with a rate of incoming admissions and of patients leaving can be described by a birth-death process with exponentially distributed birth and death rates.</p>
+<p>So <span class="math inline">\(\lambda\)</span> ~ <span class="math inline">\(Exp(2)\)</span> and <span class="math inline">\(\mu\)</span> ~ <span class="math inline">\(Exp(\frac{1}{10})\)</span>.</p>
+<p><strong>(a)</strong></p>
+<p>We want to know the average number of patients we expect 100 days after opening th clinic. For this we will need to compute the PDF for the difference between exponential random variables <span class="math inline">\(\lambda\)</span> and <span class="math inline">\(\mu\)</span>. We can call this function <span class="math inline">\(Z\)</span>.</p>
+<p><span class="math display">\[
+f_{Z}(z) = \frac{\lambda \mu}{\lambda + \mu}e^{-\lambda z}
+\]</span></p>
+<p>Now we need to calculate the expectation at <span class="math inline">\(z = 100\)</span>. That is calculate,</p>
+<p><span class="math display">\[
+\int_{0}^{100} \frac{\lambda \mu}{\lambda + \mu}e^{-\lambda z} dz = \frac{\mu - e^{-100 \lambda}\mu}{\lambda + \mu}
+\]</span></p>
+<p>This then simplifies to,</p>
+<p><span class="math display">\[
+\frac{\mu - e^{-100 \lambda}\mu}{\lambda + \mu} = \frac{10 - e^{(-100)(0.5)}(10)}{10 + 0.5} = 0.952381
+\]</span></p>
+<p>To make sure that’s true, let’s write a quick simulation:</p>
+<pre class="r"><code>sim_number_of_patients &lt;- function(niter = 100, mean_birth_rate, mean_death_rate) {
+    l &lt;- numeric(niter)
+    lambda &lt;- rexp(n = 1, rate = 1/mean_birth_rate)
+    l[1] &lt;- lambda
+    for (i in 2:niter) {
+        lambda &lt;- rexp(n = 1, rate = 1/mean_birth_rate)
+        mu &lt;- rexp(n = 1, rate = 1/mean_death_rate)
+        l[i] &lt;- ifelse(l[i - 1] + lambda - mu &gt; 0, l[i - 1] + lambda - mu, 0)
+    }
+    return(l)
+}</code></pre>
+<p>And let’s run this simulation:</p>
+<pre class="r"><code>sim_number_of_patients(niter = 100, 0.5, 10)</code></pre>
+<pre><code>  [1] 0.07317974 0.00000000 0.00000000 0.00000000 0.00000000 0.00000000
+  [7] 0.00000000 0.00000000 0.12077185 0.00000000 0.00000000 0.00000000
+ [13] 0.00000000 0.00000000 0.00000000 0.00000000 0.00000000 0.00000000
+ [19] 0.00000000 0.00000000 0.00000000 0.00000000 0.00000000 0.00000000
+ [25] 0.00000000 0.00000000 0.00000000 0.00000000 0.00000000 0.00000000
+ [31] 0.00000000 0.00000000 0.00000000 0.00000000 0.00000000 0.00000000
+ [37] 1.24640391 0.00000000 0.00000000 0.00000000 0.00000000 0.00000000
+ [43] 0.00000000 0.00000000 0.00000000 0.00000000 0.00000000 0.00000000
+ [49] 0.00000000 0.00000000 0.00000000 0.00000000 0.00000000 0.00000000
+ [55] 0.00000000 0.00000000 0.27486782 0.00000000 0.00000000 0.00000000
+ [61] 0.00000000 0.00000000 0.00000000 0.00000000 0.00000000 0.00000000
+ [67] 0.00000000 0.00000000 0.00000000 0.00000000 0.00000000 0.00000000
+ [73] 0.00000000 0.00000000 0.00000000 0.00000000 0.00000000 0.00000000
+ [79] 0.00000000 0.00000000 0.00000000 0.00000000 0.00000000 0.00000000
+ [85] 0.00000000 0.00000000 0.00000000 0.00000000 0.00000000 0.00000000
+ [91] 0.00000000 0.00000000 0.00000000 0.00000000 0.00000000 0.00000000
+ [97] 0.00000000 0.00000000 0.00000000 0.41053897</code></pre>
+<p><strong>(b)</strong></p>
+<p>Now we want to consider worst case scenarios to make sure we have enough beds on the rare influx of a large number of patients. In 1 out of 50 openings, how many beds would we need to accomodate the worst case scenario?</p>
+</div>
+<div id="problem-3" class="section level3">
+<h3>Problem 3</h3>
+<p>A population of organisms consists of both male and female members. Any male is likely to mate with any female in a time interval of length <span class="math inline">\(h\)</span>, with probability <span class="math inline">\(\lambda h + o(h)\)</span>. Each mating produces one offspring, equally likely to be male or female. Let <span class="math inline">\(N_{1}(t)\)</span> and <span class="math inline">\(N_{2}(t)\)</span> denote the number of males and females in the population at <span class="math inline">\(t\)</span>. Derive the parameters of the continuous-time Markov chain <span class="math inline">\(\{N_{1}(t),\ N_{2}(t)\}\)</span>.</p>
+<p>We want to find the rate of transition between states, <span class="math inline">\(v_{i}\)</span>, and the probabilities of moving between states, <span class="math inline">\(P_{ij}\)</span>.</p>
+<p><span class="math inline">\(v_{ij} = ij \lambda\)</span> and <span class="math inline">\(P_{i,j+1} = P_{i+1,j} = \frac{1}{2}\)</span></p>
+</div>
+<div id="problem-4" class="section level3">
+<h3>Problem 4</h3>
+<p>Each individual in a biological population is assumed to give birth at an exponential rate, <span class="math inline">\(\lambda\)</span>, and to die at an exponential rate, <span class="math inline">\(\mu\)</span>. In addition, there is an exponential rate of increase <span class="math inline">\(\theta\)</span> due to immigration. However, immigration is not allowed when the population size is N or larger:</p>
+<p><strong>(a)</strong></p>
+<p>Setting up the birth-death model:</p>
+<p><span class="math inline">\(\mu_{n} = n \mu\)</span>, <span class="math inline">\(\lambda_{n} = n \lambda + \theta\)</span> if <span class="math inline">\(n \lt N\)</span>, and <span class="math inline">\(\lambda_{n} = n \lambda\)</span> if <span class="math inline">\(n \geq N\)</span></p>
+<p><strong>(b)</strong></p>
+<p>If <span class="math inline">\(N = 3\)</span>, <span class="math inline">\(1 = \theta = \lambda\)</span>, <span class="math inline">\(\mu = 2\)</span>, determine the porportion of time that immigration is restricted.</p>
+<p>Our generator matrix <span class="math inline">\(Q\)</span> is going to be:</p>
+<p><span class="math display">\[
+Q = \begin{pmatrix}
+-\lambda_{0} &amp; \lambda_{0} &amp; 0 &amp; 0 &amp; 0 &amp; . . . \\ 
+\mu_{1} &amp; -(\mu_{1} + \lambda_{1}) &amp; \lambda_{1} &amp; 0 &amp; 0 &amp; . . . \\ 
+0 &amp; \mu_{2} &amp; -(\mu_{2} + \lambda_{2}) &amp; \lambda_{2} &amp; 0 &amp; . . . \\ 
+0 &amp; 0 &amp; \mu_{3} &amp; -(\mu_{3} + \lambda_{3}) &amp; \lambda_{3} &amp; 0 \\ 
+. &amp; . &amp; . &amp; . &amp; . &amp; . \\
+. &amp; . &amp; . &amp; . &amp; . &amp; . \\
+. &amp; . &amp; . &amp; . &amp; . &amp; .
+\end{pmatrix}
+\]</span></p>
+<p>We then solve for <span class="math inline">\((P_{0}, P_{1}, P_{2})\)</span> according to our parameterization <span class="math inline">\((N = 3, \theta = \lambda = 1, \mu = 2)\)</span>:</p>
+<p><span class="math display">\[
+\begin{align*}
+P_{1} &amp;= \frac{1}{2}P_{0} \\
+P_{2} &amp;= \frac{1}{4}P_{0} \\
+P_{0} &amp;= \frac{1}{1 + \sum_{n=1}^{\infty} \frac{\lambda_{0}...\lambda_{n-1}}{\mu_{1}...\mu_{n}}} \\
+\sum_{n=1}^{\infty} \frac{\lambda_{0}...\lambda_{n-1}}{\mu_{1}...\mu_{n}} &amp;= \frac{\lambda_{0}}{\mu_{1}} + \frac{\lambda_{0}\lambda_{1}}{\mu_{1}\mu_{2}} + \frac{\lambda_{0}\lambda_{1}\lambda_{2}}{\mu_{1}\mu_{2}\mu_{3}}  + \sum_{n=4}^{\infty} \frac{\lambda_{0}...\lambda_{n-1}}{\mu_{1}...\mu_{n}} \\
+&amp;= \frac{1}{2} + \frac{1}{4} + \frac{1}{8} + \sum_{n=4}^{\infty} \frac{\lambda_{0}...\lambda_{n-1}}{\mu_{1}...\mu_{n}} \\
+&amp;= \frac{7}{8} + \sum_{n=4}^{\infty} \frac{1(2)(3)(3...n-1)}{2((2)(2))((2)(3))((2)(4))...((2)(n))} \\
+&amp;= \frac{7}{8} + \sum_{n=4}^{\infty} \frac{3(n-1)!}{2^{n}n!} \\
+&amp;= \frac{7}{8} + log(8) - 2 \\
+P_{0} &amp;= \frac{1}{1 + \frac{7}{8} + log(8) - 2} = 0.51166 \\
+P_{1} &amp;= \frac{1}{2}(0.51166) = 0.25583 \\
+P_{2} &amp;= \frac{1}{4}(0.51166) = 0.12791 \\
+\sum_{i=0}^{2}P_{i} &amp;= 0.51166 + 0.25583 + 0.12791 = 0.8954 \\
+\sum_{i=3}^{\infty} &amp;= 1 - 0.8954 = 0.1046
+\end{align*}
+\]</span></p>
+</div>
+<div id="problem-5" class="section level3">
+<h3>Problem 5</h3>
+<p><strong>The surface of a bacterium consists of several sites at which foreign molecules become attached. We consider a particular site and assume that molecules arrive at the site according to a Poisson process with parameter <span class="math inline">\(\lambda\)</span>. Among these molecules a proportion <span class="math inline">\(\alpha\)</span> is acceptable. Unacceptable molecules stay at the site for a length of time that is exponentially distributed with parameter <span class="math inline">\(\mu_{1}\)</span>, whereas an acceptable molecule remains at the site for an exponential time with rate <span class="math inline">\(\mu_{2}\)</span>. An arriving molecule will become attached only if the site is free of other molecules. What percentage of time is the site occupied with an acceptable (unacceptable) molecule?</strong></p>
+<p>We can consider a continuous–time Markov chain with 3 states defined as 0, 1, or 2 as the site being free, attached to an unacceptable molecule and attached to an acceptable molecule, respectively. The transition rate matrix Q is:</p>
+<p><span class="math display">\[
+Q = \begin{pmatrix}
+-\lambda &amp; -\lambda \alpha &amp; \lambda (1 - \alpha) \\ 
+\mu_{2} &amp; -\mu_{2} &amp; 0 \\ 
+\mu_{1} &amp; 0 &amp; -\mu_{1}
+\end{pmatrix}
+\]</span></p>
+<p>We have the balance equations:</p>
+<p><span class="math display">\[
+\begin{align*}
+\mu_{2}P_{2} &amp;= \alpha \lambda P_{0} \\
+\mu_{1}P_{1} &amp;= (1 - \alpha) \lambda P_{0} \\
+P_{0} + P_{1} + P_{2} &amp;= 1
+\end{align*}
+\]</span> So the percentage of the time the site is occupied by an acceptable molecule is:</p>
+<p><span class="math display">\[
+P_{1} = \frac{\alpha \mu_{2}^{-1}}{\lambda^{-1} + (1 - \alpha)\mu_{1}^{-1} + \alpha \mu_{2}^{-1}}
+\]</span></p>
+<p>And the percentage of the time the site is occupied by an unacceptable molecule is:</p>
+<p><span class="math display">\[
+P_{2} = \frac{(1 - \alpha) \mu_{1}^{-1}}{\lambda^{-1} + (1 - \alpha)\mu_{1}^{-1} + \alpha \mu_{2}^{-1}}
+\]</span></p>
+</div>
+<div id="problem-6" class="section level3">
+<h3>Problem 6</h3>
+<p>Derive the stationary distribution for the Kimura 2-parameter (1980) model.</p>
+<p>The detail balance equations give us:</p>
+<p><span class="math display">\[
+\sum_{i}\pi_{i} = 1 \\
+\mathbf{0} = \pi \mathbf{Q}
+\]</span> Which we can solve to obtain a stationary distribution of:</p>
+<p><span class="math display">\[
+\pi^{*} = \{\frac{1}{4},\frac{1}{4},\frac{1}{4},\frac{1}{4}\}
+\]</span></p>
+</div>
+<div id="problem-7" class="section level3">
+<h3>Problem 7</h3>
+<p>Derive the stationary distribution for the Hasegawa, Kishino and Yano (HKY, 1985) model.</p>
+<p>This allows for an arbitrary stationary distributions for the resulting Markov Chain of:</p>
+<p><span class="math display">\[
+\pi^{*} = \{\pi_{A},\pi_{G},\pi_{C},\pi_{T}\}
+\]</span></p>
 </div>
 </div>
 <div id="session-information" class="section level2">
 <h2>Session Information</h2>
 <pre class="r"><code>sessionInfo()</code></pre>
-<pre><code>R version 3.3.2 (2016-10-31)
-Platform: x86_64-pc-linux-gnu (64-bit)
-Running under: Gentoo/Linux
+<pre><code>R version 3.3.3 (2017-03-06)
+Platform: x86_64-apple-darwin16.4.0 (64-bit)
+Running under: macOS Sierra 10.12.4
 
 locale:
- [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
- [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
- [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
- [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
- [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 
 attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 loaded via a namespace (and not attached):
  [1] backports_1.0.5 magrittr_1.5    rprojroot_1.2   formatR_1.4    
- [5] tools_3.3.2     htmltools_0.3.5 yaml_2.1.14     Rcpp_0.12.9    
- [9] stringi_1.1.2   rmarkdown_1.3   knitr_1.15.1    git2r_0.18.0   
-[13] stringr_1.2.0   digest_0.6.12   workflowr_0.3.0 evaluate_0.10  </code></pre>
+ [5] tools_3.3.3     htmltools_0.3.5 yaml_2.1.14     Rcpp_0.12.10   
+ [9] stringi_1.1.3   rmarkdown_1.3   knitr_1.15.1    git2r_0.18.0   
+[13] stringr_1.2.0   digest_0.6.12   workflowr_0.4.0 evaluate_0.10  </code></pre>
 </div>
 
 <hr>

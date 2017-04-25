@@ -46,11 +46,176 @@ $$
 P(Q_{1} =i|\lambda(t),O) = \frac{\alpha_{i}(t)\beta_{i}(t)}{\sum_{i=1}^{n}\alpha_{}(T)}
 $$
 
-## Problem 2
+### Problem 2
+
+The opening of a new hospital with a rate of incoming admissions and of patients leaving can be described by a birth-death process with exponentially distributed birth and death rates.
+
+So $\lambda$ ~ $Exp(2)$ and $\mu$ ~ $Exp(\frac{1}{10})$.
 
 **(a)**
 
-Google difference of two randomly distributed exponential random variables
+We want to know the average number of patients we expect 100 days after opening th clinic. For this we will need to compute the PDF for the difference between exponential random variables $\lambda$ and $\mu$. We can call this function $Z$.
+
+$$
+f_{Z}(z) = \frac{\lambda \mu}{\lambda + \mu}e^{-\lambda z}
+$$
+
+Now we need to calculate the expectation at $z = 100$. That is calculate, 
+
+$$
+\int_{0}^{100} \frac{\lambda \mu}{\lambda + \mu}e^{-\lambda z} dz = \frac{\mu - e^{-100 \lambda}\mu}{\lambda + \mu}
+$$
+
+This then simplifies to,
+
+$$
+\frac{\mu - e^{-100 \lambda}\mu}{\lambda + \mu} = \frac{10 - e^{(-100)(0.5)}(10)}{10 + 0.5} = `r (10-(exp(-50)*10))/(10.5)`
+$$
+
+To make sure that's true, let's write a quick simulation:
+
+```{r}
+sim_number_of_patients <- function(niter=100,mean_birth_rate,mean_death_rate) {
+  l <- numeric(niter)
+  lambda <- rexp(n=1,rate=1/mean_birth_rate)
+  l[1]   <- lambda
+  for (i in 2:niter) {
+    lambda <- rexp(n=1,rate=1/mean_birth_rate)
+    mu     <- rexp(n=1,rate=1/mean_death_rate)
+    l[i]   <- ifelse(l[i-1]+lambda-mu>0,l[i-1]+lambda-mu,0)
+  }
+  return(l)
+}
+```
+
+And let's run this simulation:
+
+```{r}
+sim_number_of_patients(niter=100,0.5,10)
+```
+
+**(b)**
+
+Now we want to consider worst case scenarios to make sure we have enough beds on the rare influx of a large number of patients. In 1 out of 50 openings, how many beds would we need to accomodate the worst case scenario?
+
+
+
+### Problem 3
+
+A population of organisms consists of both male and female members. Any male is likely to mate with any female in a time interval of length $h$, with probability $\lambda h + o(h)$. Each mating produces one offspring, equally likely to be male or female. Let $N_{1}(t)$ and $N_{2}(t)$ denote the number of males and females in the population at $t$. Derive the parameters of the continuous-time Markov chain $\{N_{1}(t),\ N_{2}(t)\}$.
+
+We want to find the rate of transition between states, $v_{i}$, and the probabilities of moving between states, $P_{ij}$.
+
+$v_{ij} = ij \lambda$ and $P_{i,j+1} = P_{i+1,j} = \frac{1}{2}$
+
+### Problem 4
+
+Each individual in a biological population is assumed to give birth at an exponential rate, $\lambda$, and to die at an exponential rate, $\mu$. In addition, there is an exponential rate of increase $\theta$ due to immigration. However, immigration is not allowed when the population size is N or larger:
+
+**(a)**
+
+Setting up the birth-death model:
+
+$\mu_{n} = n \mu$, $\lambda_{n} = n \lambda + \theta$ if $n \lt N$, and $\lambda_{n} = n \lambda$ if $n \geq N$
+
+**(b)**
+
+If $N = 3$, $1 = \theta = \lambda$, $\mu = 2$, determine the porportion of time that immigration is restricted.
+
+Our generator matrix $Q$ is going to be:
+
+$$
+Q = \begin{pmatrix}
+-\lambda_{0} & \lambda_{0} & 0 & 0 & 0 & . . . \\ 
+\mu_{1} & -(\mu_{1} + \lambda_{1}) & \lambda_{1} & 0 & 0 & . . . \\ 
+0 & \mu_{2} & -(\mu_{2} + \lambda_{2}) & \lambda_{2} & 0 & . . . \\ 
+0 & 0 & \mu_{3} & -(\mu_{3} + \lambda_{3}) & \lambda_{3} & 0 \\ 
+. & . & . & . & . & . \\
+. & . & . & . & . & . \\
+. & . & . & . & . & .
+\end{pmatrix}
+$$
+
+We then solve for $(P_{0}, P_{1}, P_{2})$ according to our parameterization $(N = 3, \theta = \lambda = 1, \mu = 2)$:
+
+$$
+\begin{align*}
+P_{1} &= \frac{1}{2}P_{0} \\
+P_{2} &= \frac{1}{4}P_{0} \\
+P_{0} &= \frac{1}{1 + \sum_{n=1}^{\infty} \frac{\lambda_{0}...\lambda_{n-1}}{\mu_{1}...\mu_{n}}} \\
+\sum_{n=1}^{\infty} \frac{\lambda_{0}...\lambda_{n-1}}{\mu_{1}...\mu_{n}} &= \frac{\lambda_{0}}{\mu_{1}} + \frac{\lambda_{0}\lambda_{1}}{\mu_{1}\mu_{2}} + \frac{\lambda_{0}\lambda_{1}\lambda_{2}}{\mu_{1}\mu_{2}\mu_{3}}  + \sum_{n=4}^{\infty} \frac{\lambda_{0}...\lambda_{n-1}}{\mu_{1}...\mu_{n}} \\
+&= \frac{1}{2} + \frac{1}{4} + \frac{1}{8} + \sum_{n=4}^{\infty} \frac{\lambda_{0}...\lambda_{n-1}}{\mu_{1}...\mu_{n}} \\
+&= \frac{7}{8} + \sum_{n=4}^{\infty} \frac{1(2)(3)(3...n-1)}{2((2)(2))((2)(3))((2)(4))...((2)(n))} \\
+&= \frac{7}{8} + \sum_{n=4}^{\infty} \frac{3(n-1)!}{2^{n}n!} \\
+&= \frac{7}{8} + log(8) - 2 \\
+P_{0} &= \frac{1}{1 + \frac{7}{8} + log(8) - 2} = 0.51166 \\
+P_{1} &= \frac{1}{2}(0.51166) = 0.25583 \\
+P_{2} &= \frac{1}{4}(0.51166) = 0.12791 \\
+\sum_{i=0}^{2}P_{i} &= 0.51166 + 0.25583 + 0.12791 = 0.8954 \\
+\sum_{i=3}^{\infty} &= 1 - 0.8954 = 0.1046
+\end{align*}
+$$
+
+### Problem 5
+
+**The surface of a bacterium consists of several sites at which foreign molecules become attached. We consider a particular site and assume that molecules arrive at the site according to a Poisson process with parameter $\lambda$. Among these molecules a proportion $\alpha$ is acceptable. Unacceptable molecules stay at the site for a length of time that is exponentially distributed with parameter $\mu_{1}$, whereas an acceptable molecule remains at the site for an exponential time with rate $\mu_{2}$. An arriving molecule will become attached only if the site is free of other molecules. What percentage of time is the site occupied with an acceptable (unacceptable) molecule?**
+
+We can consider a continuous–time Markov chain with 3 states defined as 0, 1, or 2 as the site being free, attached to an unacceptable molecule and attached to an acceptable molecule, respectively. The transition rate matrix Q is:
+
+$$
+Q = \begin{pmatrix}
+-\lambda & -\lambda \alpha & \lambda (1 - \alpha) \\ 
+\mu_{2} & -\mu_{2} & 0 \\ 
+\mu_{1} & 0 & -\mu_{1}
+\end{pmatrix}
+$$
+
+We have the balance equations:
+
+$$
+\begin{align*}
+\mu_{2}P_{2} &= \alpha \lambda P_{0} \\
+\mu_{1}P_{1} &= (1 - \alpha) \lambda P_{0} \\
+P_{0} + P_{1} + P_{2} &= 1
+\end{align*}
+$$
+So the percentage of the time the site is occupied by an acceptable molecule is:
+
+$$
+P_{1} = \frac{\alpha \mu_{2}^{-1}}{\lambda^{-1} + (1 - \alpha)\mu_{1}^{-1} + \alpha \mu_{2}^{-1}}
+$$
+
+And the percentage of the time the site is occupied by an unacceptable molecule is:
+
+$$
+P_{2} = \frac{(1 - \alpha) \mu_{1}^{-1}}{\lambda^{-1} + (1 - \alpha)\mu_{1}^{-1} + \alpha \mu_{2}^{-1}}
+$$
+
+### Problem 6
+
+Derive the stationary distribution for the Kimura 2-parameter (1980) model.
+
+The detail balance equations give us:
+
+$$
+\sum_{i}\pi_{i} = 1 \\
+\mathbf{0} = \pi \mathbf{Q}
+$$
+Which we can solve to obtain a stationary distribution of:
+
+$$
+\pi^{*} = \{\frac{1}{4},\frac{1}{4},\frac{1}{4},\frac{1}{4}\}
+$$
+
+### Problem 7
+
+Derive the stationary distribution for the Hasegawa, Kishino and Yano (HKY, 1985) model.
+
+This allows for an arbitrary stationary distributions for the resulting Markov Chain of:
+
+$$
+\pi^{*} = \{\pi_{A},\pi_{G},\pi_{C},\pi_{T}\}
+$$
 
 ## Session Information
 
